@@ -1,0 +1,14 @@
+<template type="gif">
+  <datasource>file.ncdf</datasource>
+  <title font_size="12">Titulo del gif</title>
+  <Variables>
+    <var var_file_name="SSH">Salinidad</var>
+  </Variables>
+  <layers>
+    <layer var_name="SSH" type="countour">
+      <scale>
+      </scale>
+    </layer>
+  </layers>
+  <output>prueba.gif</output>
+</template>
