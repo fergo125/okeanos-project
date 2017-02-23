@@ -1,4 +1,4 @@
-<template type="gif">
+<template type="gif" lat="">
   <datasource>file.ncdf</datasource>
   <title font_size="12">Titulo del gif</title>
   <Variables>

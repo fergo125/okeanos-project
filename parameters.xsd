@@ -13,4 +13,6 @@ elementFormDefault="qualified">
     </xs:sequence>
   </xs:complexType>
   </xs:element>
+  <xs:element>
+  </xs:element>
 </xs:schema>
