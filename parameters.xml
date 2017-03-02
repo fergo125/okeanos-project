@@ -1,10 +1,12 @@
 <template type="gif" lat="">
   <datasource>file.ncdf</datasource>
   <title font_size="12">Titulo del gif</title>
-  <Variables>
+  <variables>
     <var var_file_name="SSH">Salinidad</var>
-  </Variables>
-  <layers>
+    <lat var_file_name="Latitude"></lat>
+    <lon var_file_name="Longitude"></lon>
+  </variables>
+  <layers max_lat="15" max_lon="80" min_lat="2" min_lon="-93">
     <layer var_name="SSH" type="countour">
       <scale>
       </scale>
