@@ -3,11 +3,12 @@ import netCDF4
 from netCDF4 import num2date, date2num
 import time
 import datetime
-from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import os
-import map_creator
+#import map_plotter_creator
 import sys
+#import map_plotter_creator.map_plotterCreator
+from MapCreator import MapCreator
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')
@@ -40,7 +41,6 @@ class  Okeanos(object):
             self.template_dimensions[3] >= self.longitude_array[0]) is False:
             print("Bad template dimensions")
             return False
-
         for var in self.params.template.variables.var:
             if var['var_file_name'] in self.dataset.variables:
                 self.dataset_vars.append(self.dataset[var['var_file_name']])
@@ -50,16 +50,18 @@ class  Okeanos(object):
         return True
 
     def create_gif(self):
-        pass
-            #for layer in params.template.layers.layer:
+        map_plotter = MapCreator(*self.template_dimensions)
+        for layer in self.params.template.layers.layer:
+            print('Creating layer:',layer['var_name'])
+            map_plotter.add_layer(self.dataset[layer['var_name']],layer['type'])
 
 def main():
     xml= open(sys.argv[1],"r").read()
-    print("Params readed")
+    print("Params read")
     params = untangle.parse(xml)
     print("Cargando Archivo:", params.template.datasource.cdata)
     dataset = netCDF4.Dataset(params.template.datasource.cdata,"r")
-    print("dataset readed")
+    print("dataset read")
 
     okeanos = Okeanos(params,dataset)
 

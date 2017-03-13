@@ -2,13 +2,19 @@
   <datasource>test.nc</datasource>
   <title font_size="12">Titulo del gif</title>
   <variables>
-    <var var_file_name="Mean_period_of_wind_waves_surface">Salinidad</var>
+    <var var_file_name="Significant_height_of_combined_wind_waves_and_swell_surface">Salinidad</var>
     <lat var_file_name="lat"></lat>
     <lon var_file_name="lon"></lon>
   </variables>
-  <layers max_lat="15" max_lon="-73" min_lat="2" min_lon="-93">
-    <layer var_name="SSH" type="countour">
-      <scale>
+  <layers max_lat="12" max_lon="-72" min_lat="1" min_lon="-90">
+    <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="countour">
+      <scale min="0" max="4" dvisions="20">
+        Altura significativa
+      </scale>
+    </layer>
+    <layer var_name="Significant_height_of_wind_waves_surface" type="countour">
+      <scale min="0" max="4" dvisions="20">
+        Altura significativa
       </scale>
     </layer>
   </layers>
