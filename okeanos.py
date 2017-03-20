@@ -20,10 +20,17 @@ class  Okeanos(object):
         self.dataset = dataset
 
         self.dataset_vars = list()
-        self.latitude_array = self.dataset[params.template.variables.lat["var_file_name"]]
-        self.longitude_array = self.dataset[params.template.variables.lon["var_file_name"]]
+        self.latitude_array = self.dataset[params.template.variables.lat["var_file_name"]][:]
+        self.longitude_array = self.dataset[params.template.variables.lon["var_file_name"]][:]
 
         self.template_dimensions=list()
+        self.data_precision_factor= self.latitude_array[1]-self.latitude_array[0]
+
+        #testing with the file lat and lon
+        self.template_dimensions.append(self.latitude_array.max())
+        self.template_dimensions.append(self.longitude_array.max())
+        self.template_dimensions.append(self.latitude_array.min())
+        self.template_dimensions.append(self.longitude_array.min())
 
     def launch(self):
         if self.params.template['type'] == "gif":
@@ -50,6 +57,7 @@ class  Okeanos(object):
         return True
 
     def create_gif(self):
+        print("Creating with the lon vars: ", self.template_dimensions)
         map_plotter = MapCreator(*self.template_dimensions)
         for layer in self.params.template.layers.layer:
             print('Creating layer:',layer['var_name'])
@@ -65,10 +73,10 @@ def main():
 
     okeanos = Okeanos(params,dataset)
 
-    if okeanos.validate():
-        okeanos.launch()
-    else:
-        print("Error processing parameters")
+    #if okeanos.validate():
+    okeanos.launch()
+        # else:
+        #     print("Error processing parameters")
 
 if __name__=="__main__":
     main()
