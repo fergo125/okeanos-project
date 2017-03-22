@@ -6,7 +6,7 @@
     <lat var_file_name="lat"></lat>
     <lon var_file_name="lon"></lon>
   </variables>
-  <layers max_lat="12" max_lon="-72" min_lat="1" min_lon="-90">
+  <layers max_lat="30" max_lon="300" min_lat="0" min_lon="240">
     <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="color_mesh">
       <scale min="0" max="4" dvisions="20">
         Altura significativa

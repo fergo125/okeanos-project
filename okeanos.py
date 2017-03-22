@@ -24,13 +24,13 @@ class  Okeanos(object):
         self.longitude_array = self.dataset[params.template.variables.lon["var_file_name"]][:]
 
         self.template_dimensions=list()
-        self.data_precision_factor= self.latitude_array[1]-self.latitude_array[0]
+        self.data_precision_factor= abs(self.latitude_array[1]-self.latitude_array[0])
 
         #testing with the file lat and lon
-        self.template_dimensions.append(self.latitude_array.max())
-        self.template_dimensions.append(self.longitude_array.max())
-        self.template_dimensions.append(self.latitude_array.min())
-        self.template_dimensions.append(self.longitude_array.min())
+        # self.template_dimensions.append(self.latitude_array.max())
+        # self.template_dimensions.append(self.longitude_array.max())
+        # self.template_dimensions.append(self.latitude_array.min())
+        # self.template_dimensions.append(self.longitude_array.min())
 
     def launch(self):
         if self.params.template['type'] == "gif":
@@ -58,10 +58,14 @@ class  Okeanos(object):
 
     def create_gif(self):
         print("Creating with the lon vars: ", self.template_dimensions)
-        map_plotter = MapCreator(*self.template_dimensions)
+        map_plotter = MapCreator(*self.template_dimensions,precision=self.data_precision_factor)
+        print("lat_vector_data", self.latitude_array)
+        print("lon_vector_data", self.longitude_array)
+        map_plotter.calculate_sub_area(self.longitude_array,self.latitude_array,self.data_precision_factor)
         for layer in self.params.template.layers.layer:
             print('Creating layer:',layer['var_name'])
-            map_plotter.add_layer(self.dataset[layer['var_name']],layer['type'])
+            map_plotter.add_layer(layer['type'],layer['var_name'])
+        map_plotter.generate_animation(self.dataset)
 
 def main():
     xml= open(sys.argv[1],"r").read()
@@ -73,10 +77,10 @@ def main():
 
     okeanos = Okeanos(params,dataset)
 
-    #if okeanos.validate():
-    okeanos.launch()
-        # else:
-        #     print("Error processing parameters")
+    if okeanos.validate():
+        okeanos.launch()
+    else:
+        print("Error processing parameters")
 
 if __name__=="__main__":
     main()
