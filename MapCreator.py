@@ -42,7 +42,7 @@ class MapCreator(object):
 
     #hacer que cuando se agregue un nuevo layer se le pase unicamente los datos y los subindices
     def add_layer(self,template_type,var_name):
-        layer = Layer(template_type,var_name,self.template_subindexes)
+        layer = Layer(template_type,var_name,self.template_subindexes,self.lat_vector,self.lon_vector)
         self.layers.append(layer)
         return True
         #self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,var_array[0][::-1,::].squeeze(),cmap=plt.cm.jet)
@@ -50,5 +50,5 @@ class MapCreator(object):
 
     def generate_animation(self,var_data):
         for layer in self.layers:
-            self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,layer.get_sub_area(var_data[layer.var_name][0][::-1,::]),cmap=plt.cm.jet)
+            self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,layer.get_sub_area(var_data[layer.var_name][0][::-1,::]),cmap=plt.cm.jet,shading='interp')
         plt.show()
