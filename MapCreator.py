@@ -8,7 +8,7 @@ class MapCreator(object):
     def __init__(self,max_lat, max_lon, min_lat, min_lon,precision=None):
         self.map =Basemap(projection='merc',llcrnrlon=min_lon, \
 		urcrnrlon=max_lon,llcrnrlat=min_lat,urcrnrlat=max_lat, \
-		resolution='l')
+		resolution='c')
         self.layers = list()
         self.template_subindexes = list()
         print("Max_lat: ", max_lat)
@@ -17,8 +17,8 @@ class MapCreator(object):
         self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
         self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
 
-        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*4)
-        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*4)
+        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*8)
+        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*8)
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
