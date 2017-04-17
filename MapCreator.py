@@ -17,14 +17,14 @@ class MapCreator(object):
         self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
         self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
 
-        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*8)
-        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*8)
+        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*2)
+        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*2)
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
 
-        print('lat_vector_interpolate: ', self.interpolate_lat_vector)
-        print('lon_vector_interpolate: ', self.interpolate_lon_vector)
+        #print('lat_vector_interpolate: ', self.interpolate_lat_vector)
+        #print('lon_vector_interpolate: ', self.interpolate_lon_vector)
 
 
         self.coordinates_vector_x,self.coordinates_vector_y = self.map(*np.meshgrid(self.lon_vector,self.lat_vector))
@@ -55,7 +55,9 @@ class MapCreator(object):
         #plt.show()
 
     def generate_animation(self,var_data):
+        print('layers',self.layers)
         for layer in self.layers:
+            print('Creating layer', layer.var_name)
             layer.render(self.map,var_data[layer.var_name][0][::-1,::],self.interpolate_lat_vector,self.interpolate_lon_vector)
             #self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,layer.get_sub_area(var_data[layer.var_name][0][::-1,::]).squeeze(),cmap=plt.cm.jet,shading='interp')
-            plt.show()
+        plt.show()

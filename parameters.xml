@@ -7,15 +7,10 @@
     <lon var_file_name="lon"></lon>
   </variables>
   <layers max_lat="30" max_lon="300" min_lat="0" min_lon="260">
-    <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="color_mesh">
-      <scale min="0" max="4" dvisions="20">
-        Altura significativa
-      </scale>
+    <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="colormesh">
+      <params color='k' line_width='5'></params>
     </layer>
-    <layer var_name="Significant_height_of_wind_waves_surface" type="countour">
-      <scale min="0" max="4" dvisions="20">
-        Altura significativa
-      </scale>
+    <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="contour">
     </layer>
   </layers>
   <output>prueba.gif</output>
