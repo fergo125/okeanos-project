@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
-from Layer import *
+from layer import *
 
 class MapCreator(object):
     #Cambiar el construcctor para que reciba las medidas del netcdf y ademas las de la plantilla
