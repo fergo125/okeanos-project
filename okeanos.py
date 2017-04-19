@@ -8,7 +8,7 @@ import os
 #import map_plotter_creator
 import sys
 #import map_plotter_creator.map_plotterCreator
-from MapCreator import MapCreator
+from mapCreator import MapCreator
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')

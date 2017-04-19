@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
-from layer import *
+import layer
+from layer import Layer
+
+
 
 class MapCreator(object):
     #Cambiar el construcctor para que reciba las medidas del netcdf y ademas las de la plantilla
@@ -22,6 +25,7 @@ class MapCreator(object):
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
+
 
         #print('lat_vector_interpolate: ', self.interpolate_lat_vector)
         #print('lon_vector_interpolate: ', self.interpolate_lon_vector)
@@ -48,8 +52,11 @@ class MapCreator(object):
 
     #hacer que cuando se agregue un nuevo layer se le pase unicamente los datos y los subindices
     def add_layer(self,template_type,var_name):
-        layer = Layer(template_type,var_name,self.template_subindexes,self.lat_vector,self.lon_vector)
-        self.layers.append(layer)
+        #layer = Layer(template_type,var_name,self.template_subindexes,self.lat_vector,self.lon_vector)
+        print(layer.layer_switcher)
+        new_layer = layer.layer_switcher[template_type](var_name,self.template_subindexes,self.lat_vector,self.lon_vector)
+        self.layers.append(new_layer)
+
         return True
         #self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,var_array[0][::-1,::].squeeze(),cmap=plt.cm.jet)
         #plt.show()
