@@ -9,4 +9,7 @@ class LayerContour(Layer):
                          self.layer_data.squeeze(),\
                          shading='interp',colors='k',linewidths=0.5)
 
+    def extra_params(self):
+        pass
+
 layer_switcher['contour'] = LayerContour

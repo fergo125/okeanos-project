@@ -39,7 +39,7 @@ class Layer(object):
         else:
             self.layer_data = data
             self.coordinates_vector_x,self.coordinates_vector_y = map(*np.meshgrid(self.lon_vector,self.lon_vector))
-
-            #Opcion 1:Implementar un metodo que incluya los distintos tipos de parametros necesarios para cada animacion.
-            #Opcion 2:Investigar herencia en python y crear distintas clases para cada tipo de visualizacion.
         self.render_layer(map)
+
+    def extra_params(self):
+        pass
