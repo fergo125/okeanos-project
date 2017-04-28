@@ -13,5 +13,5 @@
     <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="contour">
     </layer>
   </layers>
-  <output>prueba.gif</output>
+  <output type='collection'>test_params_collection</output>
 </template>

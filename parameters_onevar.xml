@@ -13,5 +13,5 @@
       </scale>
     </layer>
   </layers>
-  <output>prueba.gif</output>
+  <output type='collection'>test_pics</output>
 </template>

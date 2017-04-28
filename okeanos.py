@@ -8,7 +8,8 @@ import os
 #import map_plotter_creator
 import sys
 #import map_plotter_creator.map_plotterCreator
-from mapCreator import MapCreator
+from map_creator import MapCreator
+from layers import layer_contour,layer_colormesh
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')
@@ -34,7 +35,7 @@ class  Okeanos(object):
 
     def launch(self):
         if self.params.template['type'] == "gif":
-            self.create_gif()
+            self.create_collection()
 
     def validate(self):
         self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
@@ -54,7 +55,7 @@ class  Okeanos(object):
                 return False
         return True
 
-    def create_gif(self):
+    def create_collection(self):
         print("Creating with the lon vars: ", self.template_dimensions)
         map_plotter = MapCreator(*self.template_dimensions,precision=self.data_precision_factor)
         map_plotter.calculate_sub_area(self.longitude_array,self.latitude_array,self.data_precision_factor)
@@ -62,7 +63,10 @@ class  Okeanos(object):
         for layer in self.params.template.layers.layer:
             print('Creating layer type:',layer['type'])
             map_plotter.add_layer(layer['type'],layer['var_name'])
-        map_plotter.generate_animation(self.dataset)
+        collection_name = self.params.template.output.cdata
+        if not os.path.exists(collection_name):
+            os.makedirs(collection_name)
+        map_plotter.create_collection(self.dataset,collection_name)
 
 def main():
     xml= open(sys.argv[1],"r").read()

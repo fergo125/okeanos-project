@@ -1,10 +1,10 @@
-import layer
+from layer import *
 
-layer.layer_switcher[u'colormesh'] = LayerContour.__init__
-
-class LayerColormesh(layer.Layer):
+class LayerColormesh(Layer):
     def __init__(self,var_name,layer_dimensions_indexes,template_lat_vector,template_lon_vector):
-        layer.Layer.__init__(var_name,layer_dimensions_indexes,template_lat_vector,template_lon_vector)
+        Layer.__init__(self,var_name,layer_dimensions_indexes,template_lat_vector,template_lon_vector)
 
-    def render_layer():
-        map.pcolormesh(coordinates_vector_x,coordinates_vector_y,interp_data.squeeze(),cmap=plt.cm.jet,shading='interp')
+    def render_layer(self,map):
+        map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,self.layer_data.squeeze(),cmap=plt.cm.jet,shading='interp')
+
+layer_switcher['colormesh'] = LayerColormesh
