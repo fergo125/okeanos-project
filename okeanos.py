@@ -9,7 +9,7 @@ import os
 import sys
 #import map_plotter_creator.map_plotterCreator
 from map_creator import MapCreator
-from layers import layer_contour,layer_colormesh
+from layers import layer_contour,layer_colormesh,layer_title
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')
@@ -27,17 +27,12 @@ class  Okeanos(object):
         self.template_dimensions=list()
         self.data_precision_factor= abs(self.latitude_array[1]-self.latitude_array[0])
 
-        #testing with the file lat and lon
-        #self.template_dimensions.append(self.latitude_array.max())
-        #self.template_dimensions.append(self.longitude_array.max())
-        #self.template_dimensions.append(self.latitude_array.min())
-        #self.template_dimensions.append(self.longitude_array.min())
-
     def launch(self):
-        if self.params.template['type'] == "gif":
+        if self.params.template.output['type'] == "collection":
             self.create_collection()
 
     def validate(self):
+        print('Validating data')
         self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
         self.template_dimensions.append(int(self.params.template.layers["max_lon"]))
         self.template_dimensions.append(int(self.params.template.layers["min_lat"]))
@@ -60,9 +55,12 @@ class  Okeanos(object):
         map_plotter = MapCreator(*self.template_dimensions,precision=self.data_precision_factor)
         map_plotter.calculate_sub_area(self.longitude_array,self.latitude_array,self.data_precision_factor)
         print(self.params.template.layers.layer)
+
+        map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
+
         for layer in self.params.template.layers.layer:
             print('Creating layer type:',layer['type'])
-            map_plotter.add_layer(layer['type'],layer['var_name'])
+            map_plotter.add_layer(layer['type'],layer['var_name'],layer)
         collection_name = self.params.template.output.cdata
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)

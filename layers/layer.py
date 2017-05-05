@@ -16,6 +16,7 @@ class Layer(object):
         self.layer_data = None
         self.coordinates_vector_x= None
         self.coordinates_vector_y = None
+        self.default_params = None
 
     def get_sub_area(self, data):
         return data[self.sub_indexes[2]:self.sub_indexes[0]:,\
@@ -31,15 +32,21 @@ class Layer(object):
         pass
 
     def render(self, map, data, interpolate_lat_vector = None, interpolate_lon_vector = None):
-        data_sub_area =  data[self.sub_indexes[2]:self.sub_indexes[0]:,\
-                            self.sub_indexes[3]:self.sub_indexes[1]:]
         if interpolate_lat_vector is not None and interpolate_lon_vector is not None:
             self.layer_data= self.interpolate_data(data,interpolate_lat_vector,interpolate_lon_vector)
             self.coordinates_vector_x,self.coordinates_vector_y = map(*np.meshgrid(interpolate_lon_vector,interpolate_lat_vector))
         else:
-            self.layer_data = data
+            self.layer_data = data_sub_area
             self.coordinates_vector_x,self.coordinates_vector_y = map(*np.meshgrid(self.lon_vector,self.lon_vector))
         self.render_layer(map)
 
-    def extra_params(self):
+    def extra_params(self, params_dict):
+        for k in self.default_params:
+            try:
+                if params_dict[k] is not None:
+                    self.default_params[k] = params_dict[k]
+            except IndexError:
+                pass
+
+    def process_data(self, map, data, interpolate_lat_vector, interpolate_lon_vector):
         pass
