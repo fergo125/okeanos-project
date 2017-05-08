@@ -10,7 +10,7 @@ class MapCreator(object):
     def __init__(self,max_lat, max_lon, min_lat, min_lon,precision=2):
         self.map =Basemap(projection='merc',llcrnrlon=min_lon, \
 		urcrnrlon=max_lon,llcrnrlat=min_lat,urcrnrlat=max_lat, \
-		resolution='c')
+		resolution='l')
         self.layers = list()
         self.template_subindexes = list()
         print("Max_lat: ", max_lat)
