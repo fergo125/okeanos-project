@@ -10,20 +10,24 @@ import sys
 #import map_plotter_creator.map_plotterCreator
 from map_creator import MapCreator
 from layers import layer_contour,layer_colormesh,layer_title
+from data_processor import DataProcessor
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')
 
 class  Okeanos(object):
     """docstring for  Okeanos."""
-    def __init__(self, params, dataset):
+    def __init__(self, params, dataset_name):
         self.params = params
         self.dataset = dataset
+        self.variables_data = dict()
 
         self.dataset_vars = list()
-        self.latitude_array = self.dataset[params.template.variables.lat["var_file_name"]][:]
-        self.longitude_array = self.dataset[params.template.variables.lon["var_file_name"]][:]
+        self.latitude_array = self.dataset[params.template.variables.lat.cdata][:]
+        self.longitude_array = self.dataset[params.template.variables.lon.cdata][:]
+        self.dataProcessor =  DataProcessor(dataset_name)
 
+        self.variables_data['time'] = self.dataset[params.template.variables.time.cdata][:]
         self.template_dimensions=list()
         self.data_precision_factor= abs(self.latitude_array[1]-self.latitude_array[0])
 
@@ -31,6 +35,7 @@ class  Okeanos(object):
         if self.params.template.output['type'] == "collection":
             self.create_collection()
 
+    #Pasar esto a data_processor
     def validate(self):
         print('Validating data')
         self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
@@ -45,9 +50,19 @@ class  Okeanos(object):
             print("Bad template dimensions")
             return False
         for var in self.params.template.variables.var:
-            if var['var_file_name'] not in self.dataset.variables:
-                print('Var not found in dataset: ',var['var_file_name'])
-                return False
+             if var['type'] == 'normal' and var.cdata not in self.dataset.variables:
+                 print('Var not found in dataset: ',var.cdata)
+                 return False
+             else:
+                if var['type'] == 'normal':
+                    self.add_normal_var(self.dataset,var.cdata,level)
+                if var['type'] == 'magnitude':
+                    self.add_magnitude_var(self.dataset,var.cdata,var['value_u'],var['value_v'],var['level'])
+                if var['type'] == 'vector':
+                    self.add_vector_var(self.dataset,var.cdata,var['value_u'],var['value_v'],var['level'])
+                else:
+                    print('Variable type not found')
+                    return False
         return True
 
     def create_collection(self):
@@ -60,20 +75,20 @@ class  Okeanos(object):
 
         for layer in self.params.template.layers.layer:
             print('Creating layer type:',layer['type'])
-            map_plotter.add_layer(layer['type'],layer['var_name'],layer)
+            map_plotter.add_layer(layer['type'],layer['var_name'],layer.params)
         collection_name = self.params.template.output.cdata
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)
-        map_plotter.create_collection(self.dataset,collection_name)
+        map_plotter.create_collection(self.variables_data,collection_name)
 
 def main():
     xml= open(sys.argv[1],"r").read()
     print("Params read")
     params = untangle.parse(xml)
     print("Cargando Archivo:", params.template.datasource.cdata)
-    dataset = netCDF4.Dataset(params.template.datasource.cdata,"r")
+    #dataset = netCDF4.Dataset(params.template.datasource.cdata,"r")
     print("dataset read")
-    okeanos = Okeanos(params,dataset)
+    okeanos = Okeanos(params,params.template.datasource.cdata)
     if okeanos.validate():
         okeanos.launch()
     else:

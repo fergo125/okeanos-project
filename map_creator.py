@@ -19,13 +19,18 @@ class MapCreator(object):
         self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
         self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
 
-        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*precision)
-        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*precision)
+        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*1)
+        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*1)
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
 
         self.coordinates_vector_x,self.coordinates_vector_y = self.map(*np.meshgrid(self.lon_vector,self.lat_vector))
+
+        self.default_params = {'cmap':'k','shading':'interp',\
+                                'position':'bottom',\
+                                'vmin':None,\
+                                'vmax':None}
 
 
     #calcular los subindices en el constructor
@@ -60,22 +65,27 @@ class MapCreator(object):
         self.font = font
         self.size = int(size)
 
+    def extra_params():
+        pass
+
     def create_collection(self,var_data,collection_name):
-        print('layers',self.layers)
+
         for data_index in range(0,len(var_data['time'])):
             self.map.drawcoastlines()
             self.map.drawcountries()
             self.map.drawmapboundary()
+            self.map.fillcontinents(color=(0.84, 0.82, 0.82))
+            self.map.drawmapboundary(fill_color=(0.84, 0.82, 0.82))
+            self.map.drawmeridians(np.arange(self.lon_vector.min(),self.lon_vector.max(),5),labels=[1,0,0,0])
             for layer in self.layers:
                 if type(layer) is layer_switcher['title']:
                     layer.render(plt)
                 else:
                     print('Creating layer', layer.var_name)
-                    layer.render(self.map,var_data[layer.var_name][data_index][::-1,::],self.interpolate_lat_vector,self.interpolate_lon_vector)
-                    #self.map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,layer.get_sub_area(var_data[layer.var_name][0][::-1,::]).squeeze(),cmap=plt.cm.jet,shading='interp')
+                    layer.render(self.map,var_data[layer.var_name][data_index][::-1],self.interpolate_lat_vector,self.interpolate_lon_vector)
                 frame_number = str(data_index)
                 save_path = os.path.join(collection_name,collection_name+ frame_number+ '.png')
                 print(save_path)
+            #plt.axis([self.lon_vector.min(),self.lon_vector.max(),self.lat_vector.min(),self.lat_vector.max()])
             plt.savefig(save_path)
             plt.close()
-        plt.show()

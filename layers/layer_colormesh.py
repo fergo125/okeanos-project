@@ -12,7 +12,7 @@ class LayerColormesh(Layer):
         if self.default_params['vmin'] is None and self.default_params['vmax'] is None:
             self.default_params['vmin'] = self.layer_data.min()
             self.default_params['vmax'] = self.layer_data.max()
-        self.colormesh = map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,self.layer_data.squeeze(),cmap=plt.cm.jet,shading='interp')
+        self.colormesh = map.pcolormesh(self.coordinates_vector_x,self.coordinates_vector_y,self.layer_data.squeeze(),cmap=plt.cm.jet,shading=self.default_params['shading'],vmax=float(self.default_params['vmax']),vmin=float(self.default_params['vmin']))
         bar = map.colorbar(self.colormesh,location=self.default_params['position'])
 
 layer_switcher['colormesh'] = LayerColormesh
