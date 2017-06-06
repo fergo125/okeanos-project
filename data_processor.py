@@ -15,17 +15,23 @@ class DataProcessor(Object):
         self.dataset = nc.Dataset(file_path, 'r')
         self.raw_variables = dict()
         self.data_output = dict()
+        self.data_template_dimensions = None
 
-    def process_raw_data(self, variables_names):
+    def process_dataset_variables(self, variables_names):
         for var in variables_names:
-            if len(dataset[var[0]].shape) > 3:
-                self.raw_variables[var[0]] = self.dataset[var[0]][var[1]]
+            if len(dataset[var["entry_name"]].shape) > 3:
+                self.raw_variables[var["output_name"]] = self.dataset[var["entry_name"]][var["level"]]
             else:
-                self.raw_variables[var[0]] = self.dataset[var[0]]
+                self.raw_variables[var["output_name"]] = self.dataset[var["entry_name"]]
 
-    def process_template_data(self, variables_names):
-        for v,d in variables_names:
-            self.add_var(v,d['var_type'],d['component_u'],d['component_v'],d['angle'],d['convention'])
+    def process_template_variables(self, variables_names):
+        for v in variables_names:
+            self.add_var(v["name"],v['type'],v['component_u'],v['component_v'],v['angle'],v['convention'])
+
+    def add_dimensions_variables(self,lat_name,lon_name,time_name):
+        self.raw_variables['lat'] = self.dataset[lat_name][:]
+        self.raw_variables['lon'] = self.dataset[lon_name][:]
+        self.raw_variables['time'] = self.dataset[time_name][:]
 
     def add_var(self,var_name,var_type='normal',componet_u=None, component_v=None,angle=None, convention="ATM"):
         if var_type == 'normal':
@@ -62,7 +68,16 @@ class DataProcessor(Object):
                 data_output[var_name][0][i] = calculate_vector_cos(magnitude,angle)
                 data_output[var_name][1][i] = calculate_vector_sin(magnitude,angle)
 
-    def calculate_vars(self):
+
+    def validate_dimensions(self,template_dimensions):
+        print('Validating data')
+        if (template_dimensions["max_lat"] <= self.raw_variables['lat'][len(self.raw_variables['lat'])-1] and \
+            template_dimensions["max_lon"] <= self.raw_variables['lon'][len(self.raw_variables['lon'])-1] and \
+            template_dimensions["min_lat"] >= self.raw_variables['lat'][0] and \
+            template_dimensions["min_lon"] >= self.raw_variables['lon'][0]) is False:
+            print("Bad template dimensions")
+            return False
+        return True
 
 
     def calculate_magnitude(self,component_u,component_v):

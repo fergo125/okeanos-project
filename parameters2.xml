@@ -9,7 +9,7 @@
   </variables_dataset>
   <variables_template>
     <var value_u="u-component-wind" value_v="u-component-wind" type="magnitude">wind_magnitude</var>
-    <var value_u="u-component-wind" value_v="u-component-wind" type="vector" level="1">wind_vectors</var>
+    <var value_u="u-component-wind" value_v="u-component-wind" type="vector">wind_vectors</var>
   </variables_template>
   <layers max_lat="30" max_lon="290" min_lat="0" min_lon="260" background_color="" map_color="">
     <layer var_name="wind_magnitude" type="colormesh">
