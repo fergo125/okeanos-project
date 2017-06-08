@@ -8,25 +8,29 @@ import os
 
 
 
-class DataProcessor(Object):
+class DataProcessor(object):
     #Recibe un pathname creado con os.path.abspath
     def __init__(self, dataset_name):
         file_path = os.path.abspath(dataset_name)
         self.dataset = nc.Dataset(file_path, 'r')
         self.raw_variables = dict()
         self.data_output = dict()
-        self.data_template_dimensions = None
+        self.template_dimensions = list()
+        self.data_precision_factor = None
 
     def process_dataset_variables(self, variables_names):
         for var in variables_names:
-            if len(dataset[var["entry_name"]].shape) > 3:
-                self.raw_variables[var["output_name"]] = self.dataset[var["entry_name"]][var["level"]]
+            if len(self.dataset[var["entry_name"]].shape) > 3:
+                data_shape = self.dataset[var["entry_name"]].shape
+                self.raw_variables[var["output_name"]] = np.empty((data_shape[0],data_shape[2],data_shape[3]))
+                for i in range(0,len(self.dataset[var["entry_name"]])):
+                    self.raw_variables[var["output_name"]][i] = self.dataset[var["entry_name"]][i][var["level"]]
             else:
                 self.raw_variables[var["output_name"]] = self.dataset[var["entry_name"]]
 
     def process_template_variables(self, variables_names):
         for v in variables_names:
-            self.add_var(v["name"],v['type'],v['component_u'],v['component_v'],v['angle'],v['convention'])
+            self.add_var(v['name'],v['type'],v['value_u'],v['value_v'],v['angle'],v['convention'])
 
     def add_dimensions_variables(self,lat_name,lon_name,time_name):
         self.raw_variables['lat'] = self.dataset[lat_name][:]
@@ -37,46 +41,51 @@ class DataProcessor(Object):
         if var_type == 'normal':
             self.data_output[var_name] = self.raw_variables[var_name]
         if var_type == 'magnitude':
-            self.add_magnitude_var(self.dataset,var_name,componet_u, component_v)
+            self.add_magnitude_var(var_name,componet_u, component_v)
         if var_type == 'vector':
-            self.add_vector_var(self.dataset,var_name,componet_u, component_v,angle,convention)
+            self.add_vector_var(var_name,componet_u, component_v,angle,convention)
 
     def add_magnitude_var(self,var_name,component_u,component_v):
-        data_shape = raw_data[component_u].shape
-        self.raw_data[var_name] = np.empty(data_shape)
-        for i in range(0,len(self.raw_data.[var_name])):
-            self.data_output[var_name][i] = self.calculate_magnitude(raw_data[component_u][i],raw_data[component_v][i])
+        data_shape = self.raw_variables[component_u].shape
+        self.data_output[var_name] = np.empty(data_shape)
+        for i in range(0,len(self.data_output[var_name])):
+            self.data_output[var_name][i] = self.calculate_magnitude(self.raw_variables[component_u][i],self.raw_variables[component_v][i])
 
     def add_vector_var(self,var_name,component_u=None,component_v=None,angle_name=None,convention =None):
-        data_shape = raw_data[var_name].shape
-        data_output = np.empty((2,data_shape[0],data_shape[1],data_shape[2]))
-        for i in range(0,len(self.raw_data[var_name])):
+        data_shape = self.raw_variables[component_u].shape
+        self.data_output[var_name] = np.empty((2,data_shape[0],data_shape[1],data_shape[2]))
+        for i in range(0,len(self.data_output[var_name])):
             angle = None
             magnitude = None
-            u = self.raw_data[var_name][i]
-            v = self.raw_data[var_name][i]
+            u = self.raw_variables[component_u][i]
+            v = self.raw_variables[component_v][i]
             if component_u is None and component_v is None:
-                angle = self.raw_data[angle_name][i]
-                magnitude = self.raw_data[var_name][i]
+                angle = self.raw_variables[angle_name][i]
+                magnitude = self.raw_variables[var_name][i]
             else:
                 angle = np.arctan(u/v)
-                magnitude = calculate_magnitude(u,v)
+                magnitude = self.calculate_magnitude(u,v)
             if convention is "AT":
-                data_output[var_name][0][i] = calculate_vector_sin(magnitude,angle)
-                data_output[var_name][1][i] = calculate_vector_cos(magnitude,angle)
+                self.data_output[var_name][0][i] = calculate_vector_sin(magnitude,angle)
+                self.data_output[var_name][1][i] = calculate_vector_cos(magnitude,angle)
             if convention is "OC":
-                data_output[var_name][0][i] = calculate_vector_cos(magnitude,angle)
-                data_output[var_name][1][i] = calculate_vector_sin(magnitude,angle)
+                self.data_output[var_name][0][i] = calculate_vector_cos(magnitude,angle)
+                self.data_output[var_name][1][i] = calculate_vector_sin(magnitude,angle)
 
 
     def validate_dimensions(self,template_dimensions):
         print('Validating data')
-        if (template_dimensions["max_lat"] <= self.raw_variables['lat'][len(self.raw_variables['lat'])-1] and \
-            template_dimensions["max_lon"] <= self.raw_variables['lon'][len(self.raw_variables['lon'])-1] and \
-            template_dimensions["min_lat"] >= self.raw_variables['lat'][0] and \
-            template_dimensions["min_lon"] >= self.raw_variables['lon'][0]) is False:
+        if (template_dimensions[0] <= self.raw_variables['lat'][len(self.raw_variables['lat'])-1] and \
+            template_dimensions[1] <= self.raw_variables['lon'][len(self.raw_variables['lon'])-1] and \
+            template_dimensions[2] >= self.raw_variables['lat'][0] and \
+            template_dimensions[3] >= self.raw_variables['lon'][0]) is False:
             print("Bad template dimensions")
             return False
+        self.template_dimensions = template_dimensions[:]
+        self.data_output['lat'] = self.raw_variables['lat']
+        self.data_output['lon'] = self.raw_variables['lon']
+        self.data_output['time'] = self.raw_variables['time']
+        self.data_precision_factor = abs(self.raw_variables['lon'][0]-self.raw_variables["lon"][1])
         return True
 
 
@@ -86,5 +95,5 @@ class DataProcessor(Object):
         return magnitude*np.sin(direction)
     def calculate_vector_cos(self,magnitude,direction):
         return magnitude*np.sin(direction)
-    def calculate angle(self,d):
+    def calculate_angle(self,d):
         return np.arctan()

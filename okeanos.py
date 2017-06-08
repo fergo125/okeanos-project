@@ -30,20 +30,23 @@ class  Okeanos(object):
 #List with names and characteristics of the template variables
         self.variables_template = list()
 
+        self.template_dimensions = list()
+        self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
+        self.template_dimensions.append(int(self.params.template.layers["max_lon"]))
+        self.template_dimensions.append(int(self.params.template.layers["min_lat"]))
+        self.template_dimensions.append(int(self.params.template.layers["min_lon"]))
+
 #this vectors are no longer necesary
-        self.latitude_array = self.dataset[params.template.variables.lat.cdata][:]
-        self.longitude_array = self.dataset[params.template.variables.lon.cdata][:]
+        #self.latitude_array = self.dataset[params.template.variables.lat.cdata][:]
+        #self.longitude_array = self.dataset[params.template.variables.lon.cdata][:]
 
 #The data processor is in charge to put the data in the right format for the map creation
-        self.dataProcessor =  DataProcessor(dataset_name)
+        self.data_processor =  DataProcessor(dataset_name)
 
 #this vectors are no longer necesary
-        self.variables_data['time'] = self.dataset[params.template.variables.time.cdata][:]
-        self.template_dimensions=list()
-
-#this vector is no longer necesary
-        self.data_precision_factor= abs(self.latitude_array[1]-self.latitude_array[0])
-        self.data_processor = DataProcessor(dataset_name)
+        #self.variables_data['time'] = self.dataset[params.template.variables.time.cdata][:]
+        #self.template_dimensions=list()
+        #self.data_processor = data_processor(dataset_name)
 
     def launch(self):
         if self.params.template.output['type'] == "collection":
@@ -52,25 +55,26 @@ class  Okeanos(object):
 #Pasar esto a data_processor
     def process_vars(self):
         variables_dataset = self.process_dataset_variables_parameters()
-        self.data_processor.process_dataset_variables(self.params.variables_dataset.var)
+        self.data_processor.process_dataset_variables(self.process_dataset_variables_parameters())
         variables_template = self.process_template_variables_parameters()
-        self.data_processor.process_template_variables(self.params.variables_templates.var)
-        self.data_processor.add_dimensions_variables(self.params.variables_dataset.lat.cdata,self.params.variables_dataset.lon.cdata,self.params.variables_dataset.time.cdata)
+        self.data_processor.process_template_variables(self.process_template_variables_parameters())
+        self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,self.params.template.variables_dataset.lon.cdata,self.params.template.variables_dataset.time.cdata)
+        return self.data_processor.validate_dimensions(self.template_dimensions)
 
 
     def process_dataset_variables_parameters(self):
         variables_dataset = list()
-        for var in template.variables_dataset.var:
+        for var in self.params.template.variables_dataset.var:
             dataset_var = dict()
-            dataset_var["name"] = var.cdata
-            dataset_var["output"] = var["output_name"]
-            dataset_var["level"] = var["level"]
+            dataset_var["entry_name"] = var.cdata
+            dataset_var["output_name"] = var["output_name"]
+            dataset_var["level"] = int(var["level"])
             variables_dataset.append(dataset_var)
         return variables_dataset
 
-    def process_dataset_variables_parameters(self):
+    def process_template_variables_parameters(self):
         variables_template = list()
-        for var in template.variables_template.var:
+        for var in self.params.template.variables_template.var:
             dataset_var = dict()
             dataset_var["name"] = var.cdata
             dataset_var["value_u"] = var["value_u"]
@@ -79,7 +83,7 @@ class  Okeanos(object):
             dataset_var["angle"] = var["angle"]
             dataset_var["convention"] = var["convention"]
             variables_template.append(dataset_var)
-        return variables_dataset
+        return variables_template
 
 #Delete this method.
     def validate(self):
@@ -114,8 +118,10 @@ class  Okeanos(object):
 
     def create_collection(self):
         print("Creating with the lon vars: ", self.template_dimensions)
-        map_plotter = MapCreator(*self.,precision=self.data_precision_factor)
-        map_plotter.calculate_sub_area(self.longitude_array,self.latitude_array,self.data_precision_factor)
+        map_plotter = MapCreator(*self.data_processor.template_dimensions,precision=self.data_processor.data_precision_factor)
+        map_plotter.calculate_sub_area(self.data_processor.data_output["lon"],\
+                                       self.data_processor.data_output["lat"],\
+                                       self.data_processor.data_precision_factor)
         print(self.params.template.layers.layer)
         map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
         for layer in self.params.template.layers.layer:
@@ -124,17 +130,17 @@ class  Okeanos(object):
         collection_name = self.params.template.output.cdata
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)
-        map_plotter.create_collection(self.variables_data,collection_name)
+        map_plotter.create_collection(self.data_processor.data_output,collection_name)
 
 def main():
     xml= open(sys.argv[1],"r").read()
     print("Params read")
     params = untangle.parse(xml)
-    print("Cargando Archivo:", params.template.datasource.cdata)
+    print("Cargando Archivo:", params.template.variables_dataset["datasource"])
     #dataset = netCDF4.Dataset(params.template.datasource.cdata,"r")
     print("dataset read")
-    okeanos = Okeanos(params,params.template.datasource.cdata)
-    if okeanos.validate():
+    okeanos = Okeanos(params,params.template.variables_dataset["datasource"])
+    if okeanos.process_vars():
         okeanos.launch()
     else:
         print("Error processing parameters")

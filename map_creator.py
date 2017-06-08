@@ -76,7 +76,7 @@ class MapCreator(object):
             self.map.drawmapboundary()
             self.map.fillcontinents(color=(0.84, 0.82, 0.82))
             self.map.drawmapboundary(fill_color=(0.84, 0.82, 0.82))
-            self.map.drawmeridians(np.arange(self.lon_vector.min(),self.lon_vector.max(),5),labels=[1,0,0,0])
+            #self.map.drawmeridians(np.arange(self.lon_vector.min(),self.lon_vector.max(),5),labels=[1,0,0,0])
             for layer in self.layers:
                 if type(layer) is layer_switcher['title']:
                     layer.render(plt)
