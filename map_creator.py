@@ -19,8 +19,12 @@ class MapCreator(object):
         self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
         self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
 
-        self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*1)
-        self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*1)
+        #self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*1)
+        #self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*1)
+
+        self.interpolate_lat_vector = None
+        self.interpolate_lon_vector = None
+
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
@@ -86,6 +90,5 @@ class MapCreator(object):
                 frame_number = str(data_index)
                 save_path = os.path.join(collection_name,collection_name+ frame_number+ '.png')
                 print(save_path)
-            #plt.axis([self.lon_vector.min(),self.lon_vector.max(),self.lat_vector.min(),self.lat_vector.max()])
             plt.savefig(save_path)
             plt.close()

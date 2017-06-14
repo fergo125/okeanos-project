@@ -17,6 +17,7 @@ class Layer(object):
         self.coordinates_vector_x= None
         self.coordinates_vector_y = None
         self.default_params = None
+        self.layer_data =
 
     def get_sub_area(self, data):
         return data[self.sub_indexes[2]:self.sub_indexes[0]:,\
@@ -41,12 +42,13 @@ class Layer(object):
         self.render_layer(map)
 
     def extra_params(self, params_dict):
-        for k in self.default_params:
-            try:
-                if params_dict[k] is not None:
-                    self.default_params[k] = params_dict[k]
-            except IndexError:
-                pass
+        if type(params_dict) is not None:
+            for k in self.default_params:
+                try:
+                    if params_dict[k] is not None:
+                        self.default_params[k] = params_dict[k]
+                except IndexError:
+                    pass
 
     def process_data(self, map, data, interpolate_lat_vector, interpolate_lon_vector):
         pass

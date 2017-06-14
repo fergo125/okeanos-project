@@ -66,11 +66,11 @@ class DataProcessor(object):
                 angle = np.arctan(u/v)
                 magnitude = self.calculate_magnitude(u,v)
             if convention is "AT":
-                self.data_output[var_name][0][i] = calculate_vector_sin(magnitude,angle)
-                self.data_output[var_name][1][i] = calculate_vector_cos(magnitude,angle)
+                self.data_output[var_name][i][0] = calculate_vector_sin(magnitude,angle)
+                self.data_output[var_name][i][1] = calculate_vector_cos(magnitude,angle)
             if convention is "OC":
-                self.data_output[var_name][0][i] = calculate_vector_cos(magnitude,angle)
-                self.data_output[var_name][1][i] = calculate_vector_sin(magnitude,angle)
+                self.data_output[var_name][i][0] = calculate_vector_cos(magnitude,angle)
+                self.data_output[var_name][i][1] = calculate_vector_sin(magnitude,angle)
 
 
     def validate_dimensions(self,template_dimensions):

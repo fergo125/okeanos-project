@@ -9,7 +9,7 @@ import os
 import sys
 #import map_plotter_creator.map_plotterCreator
 from map_creator import MapCreator
-from layers import layer_contour,layer_colormesh,layer_title
+from layers import layer_contour,layer_colormesh,layer_title,layer_arrows
 from data_processor import DataProcessor
 
 reload(sys) # just to be sure

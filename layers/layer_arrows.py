@@ -1,14 +1,10 @@
 from layer import *
 
-class LayerColormesh(Layer):
+class LayerArrows(Layer):
     def __init__(self,var_name,layer_dimensions_indexes,template_lat_vector,template_lon_vector):
         Layer.__init__(self,var_name,layer_dimensions_indexes,template_lat_vector,template_lon_vector)
-        self.default_params = {'var_u':None,'var_v':None}
-
+        self.default_params = {'color':'b'}
     def render_layer(self,map):
-        map
+        map.quiver(self.coordinates_vector_x,self.coordinates_vector_y,self.layer_data[0],self.layer_data[1],color=default_params["color"])
 
-    def calculate_u_v(self,data):
-        
-
-layer_switcher['colormesh'] = LayerColormesh
+layer_switcher['arrows'] = LayerArrows
