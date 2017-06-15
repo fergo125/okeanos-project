@@ -7,17 +7,18 @@ import os
 
 class MapCreator(object):
     #Cambiar el construcctor para que reciba las medidas del netcdf y ademas las de la plantilla
-    def __init__(self,max_lat, max_lon, min_lat, min_lon,precision=2):
+    #def __init__(self,max_lat, max_lon, min_lat, min_lon,precision=2):
+    def __init__(self,max_lat, max_lon, min_lat, min_lon):
         self.map =Basemap(projection='merc',llcrnrlon=min_lon, \
 		urcrnrlon=max_lon,llcrnrlat=min_lat,urcrnrlat=max_lat, \
 		resolution='l')
         self.layers = list()
-        self.template_subindexes = list()
+        #self.template_subindexes = list()
         print("Max_lat: ", max_lat)
         print("Min_lat: ", min_lat)
-        print("Precision: ", precision)
-        self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
-        self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
+        #print("Precision: ", precision)
+        #self.lat_vector = np.arange(min_lat,max_lat+precision,precision)
+        #self.lon_vector = np.arange(min_lon,max_lon+precision,precision)
 
         #self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*1)
         #self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*1)

@@ -54,12 +54,12 @@ class  Okeanos(object):
 
 #Pasar esto a data_processor
     def process_vars(self):
+        self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,self.params.template.variables_dataset.lon.cdata,self.params.template.variables_dataset.time.cdata)
         variables_dataset = self.process_dataset_variables_parameters()
         self.data_processor.process_dataset_variables(self.process_dataset_variables_parameters())
         variables_template = self.process_template_variables_parameters()
         self.data_processor.process_template_variables(self.process_template_variables_parameters())
-        self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,self.params.template.variables_dataset.lon.cdata,self.params.template.variables_dataset.time.cdata)
-        return self.data_processor.validate_dimensions(self.template_dimensions)
+        return self.data_processor.add_template_dimensions(self.template_dimensions)
 
 
     def process_dataset_variables_parameters(self):
@@ -84,36 +84,6 @@ class  Okeanos(object):
             dataset_var["convention"] = var["convention"]
             variables_template.append(dataset_var)
         return variables_template
-
-#Delete this method.
-    def validate(self):
-        print('Validating data')
-        self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
-        self.template_dimensions.append(int(self.params.template.layers["max_lon"]))
-        self.template_dimensions.append(int(self.params.template.layers["min_lat"]))
-        self.template_dimensions.append(int(self.params.template.layers["min_lon"]))
-
-        if (self.template_dimensions[0] <= self.latitude_array[len(self.latitude_array)-1] and \
-            self.template_dimensions[1] <= self.longitude_array[len(self.longitude_array)-1] and \
-            self.template_dimensions[2] >= self.latitude_array[0] and \
-            self.template_dimensions[3] >= self.longitude_array[0]) is False:
-            print("Bad template dimensions")
-            return False
-        for var in self.params.template.variables.var:
-             if var['type'] == 'normal' and var.cdata not in self.dataset.variables:
-                 print('Var not found in dataset: ',var.cdata)
-                 return False
-             else:
-                if var['type'] == 'normal':
-                    self.add_normal_var(self.dataset,var.cdata,level)
-                if var['type'] == 'magnitude':
-                    self.add_magnitude_var(self.dataset,var.cdata,var['value_u'],var['value_v'],var['level'])
-                if var['type'] == 'vector':
-                    self.add_vector_var(self.dataset,var.cdata,var['value_u'],var['value_v'],var['level'])
-                else:
-                    print('Variable type not found')
-                    return False
-        return True
 
 
     def create_collection(self):
