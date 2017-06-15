@@ -1,0 +1,17 @@
+<template type="gif" lat="">
+  <datasource>Data/test.nc</datasource>
+  <title font_size="12">Titulo del gif</title>
+  <variables>
+    <var var_file_name="Significant_height_of_combined_wind_waves_and_swell_surface">Salinidad</var>
+    <lat var_file_name="lat"></lat>
+    <lon var_file_name="lon"></lon>
+  </variables>
+  <layers max_lat="30" max_lon="300" min_lat="0" min_lon="250">
+    <layer var_name="Significant_height_of_combined_wind_waves_and_swell_surface" type="contour">
+      <scale min="0" max="4" dvisions="20" position='left'>
+        Altura significativa
+      </scale>
+    </layer>
+  </layers>
+  <output type='collection'>test_pics</output>
+</template>
