@@ -27,7 +27,7 @@ class DataProcessor(object):
         for var in variables_names:
             process_level = True if len(self.dataset[var["entry_name"]].shape) > 3 else False
             data_shape = self.dataset[var["entry_name"]].shape
-            self.raw_variables[var["output_name"]] = np.empty((data_shape[0],len(self.dataoutput["lon"]),len(self.dataoutput["lat"])))
+            self.raw_variables[var["output_name"]] = np.empty((data_shape[0],len(self.data_output["lon"]),len(self.dataoutput["lat"])))
             for i in range(0,len(self.dataset[var["entry_name"]])):
                 if process_level:
                     interp_fun = self.interpolate_data(self.dataset[var["entry_name"]][i][var["level"]])
@@ -41,12 +41,10 @@ class DataProcessor(object):
             self.add_var(v['name'],v['type'],v['value_u'],v['value_v'],v['angle'],v['convention'])
 
     def add_dimensions_variables(self,lat_name,lon_name,time_name):
-        # self.raw_variables['lat'] = self.dataset[lat_name][:]
-        # self.raw_variables['lon'] = self.dataset[lon_name][:]
         self.raw_variables["lat"] = self.dataset[lat_name][:]
         self.raw_variables["lon"] = self.dataset[lon_name][:]
         self.raw_variables['time'] = self.dataset[time_name][:]
-        self.data_precision_factor = abs(self.original_lat[0]-self.original_lat[1])
+        self.data_precision_factor = abs(self.raw_variables["lat"][0]-self.raw_variables["lat"][1])
 
 
     def add_var(self,var_name,var_type='normal',componet_u=None, component_v=None,angle=None, convention="ATM"):

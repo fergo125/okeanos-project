@@ -23,14 +23,14 @@ class MapCreator(object):
         #self.interpolate_lat_vector = np.linspace(min_lat,max_lat,self.lat_vector.shape[0]*1)
         #self.interpolate_lon_vector = np.linspace(min_lon,max_lon,self.lon_vector.shape[0]*1)
 
-        self.interpolate_lat_vector = None
-        self.interpolate_lon_vector = None
+        #self.interpolate_lat_vector = None
+        #self.interpolate_lon_vector = None
 
 
         print('lat_vector_template: ', self.lat_vector)
         print('lon_vector_template: ', self.lon_vector)
 
-        self.coordinates_vector_x,self.coordinates_vector_y = self.map(*np.meshgrid(self.lon_vector,self.lat_vector))
+        #self.coordinates_vector_x,self.coordinates_vector_y = self.map(*np.meshgrid(self.lon_vector,self.lat_vector))
 
         self.default_params = {'cmap':'k','shading':'interp',\
                                 'position':'bottom',\
@@ -87,7 +87,7 @@ class MapCreator(object):
                     layer.render(plt)
                 else:
                     print('Creating layer', layer.var_name)
-                    layer.render(self.map,var_data[layer.var_name][data_index][::-1],self.interpolate_lat_vector,self.interpolate_lon_vector)
+                    layer.render(self.map,var_data[layer.var_name][data_index][::-1],var_data["lat"],var_data["lon"])
                 frame_number = str(data_index)
                 save_path = os.path.join(collection_name,collection_name+ frame_number+ '.png')
                 print(save_path)
