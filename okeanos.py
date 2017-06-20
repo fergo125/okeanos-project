@@ -36,6 +36,8 @@ class  Okeanos(object):
         self.template_dimensions.append(int(self.params.template.layers["min_lat"]))
         self.template_dimensions.append(int(self.params.template.layers["min_lon"]))
 
+        self.interpolation_factor = int(self.params.template.layers["interpolation_factor"])
+
 #this vectors are no longer necesary
         #self.latitude_array = self.dataset[params.template.variables.lat.cdata][:]
         #self.longitude_array = self.dataset[params.template.variables.lon.cdata][:]
@@ -55,12 +57,13 @@ class  Okeanos(object):
 #Pasar esto a data_processor
     def process_vars(self):
         self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,self.params.template.variables_dataset.lon.cdata,self.params.template.variables_dataset.time.cdata)
+        if  not self.data_processor.add_template_dimensions(self.template_dimensions,self.interpolation_factor):
+            return False
         variables_dataset = self.process_dataset_variables_parameters()
         self.data_processor.process_dataset_variables(self.process_dataset_variables_parameters())
         variables_template = self.process_template_variables_parameters()
         self.data_processor.process_template_variables(self.process_template_variables_parameters())
-        return self.data_processor.add_template_dimensions(self.template_dimensions)
-
+        return True
 
     def process_dataset_variables_parameters(self):
         variables_dataset = list()
@@ -88,10 +91,7 @@ class  Okeanos(object):
 
     def create_collection(self):
         print("Creating with the lon vars: ", self.template_dimensions)
-        map_plotter = MapCreator(*self.data_processor.template_dimensions,precision=self.data_processor.data_precision_factor)
-        map_plotter.calculate_sub_area(self.data_processor.data_output["lon"],\
-                                       self.data_processor.data_output["lat"],\
-                                       self.data_processor.data_precision_factor)
+        map_plotter = MapCreator(self.data_processor.data_output["lat"],self.data_processor.data_output["lon"])
         print(self.params.template.layers.layer)
         map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
         for layer in self.params.template.layers.layer:

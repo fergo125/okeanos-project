@@ -2,7 +2,7 @@ from layer import *
 
 class LayerTitle(Layer):
     def __init__(self,title):
-        Layer.__init__(self,None,None,None,None)
+        Layer.__init__(self,None,None,None)
         self.title = title
         self.default_params = {'family':'Open Sans','fontsize':'15'}
 

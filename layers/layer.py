@@ -8,8 +8,8 @@ layer_switcher = dict()
 class Layer(object):
 
     def __init__(self,var_name,coordinates_vector_x,coordinates_vector_y):
-        self.coordinates_vector_x= coordinates_vector_x
-        self.coordinates_vector_y = coordinates_vector_y
+        self.coordinates_x= coordinates_vector_x
+        self.coordinates_y = coordinates_vector_y
         self.default_params = None
         self.var_name = var_name
 
