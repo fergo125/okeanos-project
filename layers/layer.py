@@ -23,5 +23,5 @@ class Layer(object):
                 try:
                     if params_dict[k] is not None:
                         self.default_params[k] = params_dict[k]
-                except IndexError:
+                except IndexError or AttributeError:
                     pass

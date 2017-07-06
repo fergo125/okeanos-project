@@ -11,7 +11,7 @@ class MapCreator(object):
     def __init__(self,lat,lon):
         self.map =Basemap(projection='merc',llcrnrlon=lon.min(), \
 		urcrnrlon=lon.max(),llcrnrlat=lat.min(),urcrnrlat=lat.max(), \
-		resolution='l')
+		resolution='h')
         self.layers = list()
 
         self.coordinates_x,self.coordinates_y = self.map(*np.meshgrid(lon,lat))
@@ -44,23 +44,27 @@ class MapCreator(object):
     def extra_params():
         pass
 
-    def create_collection(self,var_data,collection_name):
+    def create_collection(self,var_data,collection_name,dpi=200,draw_map=True):
+        axis_text = {'fontsize':6}
         coordinates_x,coordinates_y =  self.map(*np.meshgrid(var_data["lon"],var_data["lat"]))
         for data_index in range(0,len(var_data['time'])):
+            plt.figure(figsize=(4,4),dpi=170)
             self.map.drawcoastlines()
+            if draw_map:
+                print("Drawing map")
+                self.map.fillcontinents(color=(0.84, 0.82, 0.82))
             self.map.drawcountries()
             self.map.drawmapboundary()
-            #self.map.fillcontinents(color=(0.84, 0.82, 0.82))
             self.map.drawmapboundary(fill_color=(0.84, 0.82, 0.82))
-            #self.map.drawmeridians(np.arange(self.lon_vector.min(),self.lon_vector.max(),5),labels=[1,0,0,0])
+            self.map.drawmeridians(np.linspace(var_data['lon'].min(),var_data['lon'].max(),5)[1:],labels=[0,0,0,1],fontdict=axis_text,color='gray',linewidth=0.5)
+            self.map.drawparallels(np.linspace(var_data['lat'].min(),var_data['lat'].max(),5)[1:],labels=[1,0,0,0],fontdict=axis_text,color='gray',linewidth=0.5)
             for layer in self.layers:
                 if type(layer) is layer_switcher['title']:
                     layer.render(plt)
                 else:
-                    #print('Creating layer', layer.var_name)
-                    layer.render(self.map,var_data[layer.var_name][data_index][::-1])
+                    layer.render(self.map,var_data[layer.var_name][data_index])
                 frame_number = str(data_index)
                 save_path = os.path.join(collection_name,collection_name+ frame_number+ '.png')
             print(save_path)
-            plt.savefig(save_path)
+            plt.savefig(save_path,)
             plt.close()

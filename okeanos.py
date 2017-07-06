@@ -9,7 +9,7 @@ import os
 import sys
 #import map_plotter_creator.map_plotterCreator
 from map_creator import MapCreator
-from layers import layer_contour,layer_colormesh,layer_title,layer_arrows
+from layers import layer_contour,layer_colormesh,layer_title,layer_arrows,layer_stream
 from data_processor import DataProcessor
 
 reload(sys) # just to be sure
@@ -71,7 +71,8 @@ class  Okeanos(object):
             dataset_var = dict()
             dataset_var["entry_name"] = var.cdata
             dataset_var["output_name"] = var["output_name"]
-            dataset_var["level"] = int(var["level"])
+            if var["level"] is not None:
+                dataset_var["level"] = int(var["level"])
             variables_dataset.append(dataset_var)
         return variables_dataset
 
@@ -82,6 +83,7 @@ class  Okeanos(object):
             dataset_var["name"] = var.cdata
             dataset_var["value_u"] = var["value_u"]
             dataset_var["value_v"] = var["value_v"]
+            dataset_var["magnitude"] = var["magnitude"]
             dataset_var["type"] = var["type"]
             dataset_var["angle"] = var["angle"]
             dataset_var["convention"] = var["convention"]
@@ -94,13 +96,16 @@ class  Okeanos(object):
         map_plotter = MapCreator(self.data_processor.data_output["lat"],self.data_processor.data_output["lon"])
         print(self.params.template.layers.layer)
         map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
+        draw_map = True
+        if self.params.template.layers["draw_map"] is not None:
+            draw_map = True if self.params.template.layers["draw_map"] == "True" else False
         for layer in self.params.template.layers.layer:
             print('Creating layer type:',layer['type'])
             map_plotter.add_layer(layer['type'],layer['var_name'],layer.params)
         collection_name = self.params.template.output.cdata
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)
-        map_plotter.create_collection(self.data_processor.data_output,collection_name)
+        map_plotter.create_collection(self.data_processor.data_output,collection_name,200,draw_map)
 
 def main():
     xml= open(sys.argv[1],"r").read()

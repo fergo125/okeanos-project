@@ -5,6 +5,7 @@ class LayerColormesh(Layer):
         Layer.__init__(self,var_name,coordinates_x,coordinates_y)
         self.default_params = {'cmap':'k','shading':'interp',\
                                 'position':'bottom',\
+                                'pad':'0.2',\
                                 'vmin':None,\
                                 'vmax':None}
 
@@ -13,6 +14,6 @@ class LayerColormesh(Layer):
             self.default_params['vmin'] = data.min()
             self.default_params['vmax'] = data.max()
         self.colormesh = map.pcolormesh(self.coordinates_x,self.coordinates_y,data.squeeze(),cmap=plt.cm.jet,shading=self.default_params['shading'],vmax=float(self.default_params['vmax']),vmin=float(self.default_params['vmin']))
-        bar = map.colorbar(self.colormesh,location=self.default_params['position'])
+        bar = map.colorbar(self.colormesh,location=self.default_params['position'],pad=float(self.default_params["pad"]))
 
 layer_switcher['colormesh'] = LayerColormesh
