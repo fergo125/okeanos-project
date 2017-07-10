@@ -52,7 +52,7 @@ class MapCreator(object):
             self.map.drawcoastlines()
             if draw_map:
                 print("Drawing map")
-                self.map.fillcontinents(color=(0.84, 0.82, 0.82))
+                self.map.fillcontinents(color="#d4d4d4")
             self.map.drawcountries()
             self.map.drawmapboundary()
             self.map.drawmapboundary(fill_color=(0.84, 0.82, 0.82))

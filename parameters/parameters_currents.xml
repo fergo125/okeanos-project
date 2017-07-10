@@ -1,0 +1,26 @@
+<template>
+  <title fontsize="15">Prueba de corrientes </title>
+  <variables_dataset datasource="Data/data_currents.nc">
+    <var level="0" output_name="u-component-current">uo</var>
+    <var level="0" output_name="v-component-current">vo</var>
+    <time>time</time>
+    <lat>latitude</lat>
+    <lon>longitude</lon>
+  </variables_dataset>
+  <variables_template>
+    <var value_u="u-component-current" value_v="v-component-current" type="magnitude">current_magnitude</var>
+    <var value_u="u-component-current" value_v="v-component-current" type="vector">current_vectors</var>
+  </variables_template>
+  <layers max_lat="15" max_lon="-80" min_lat="5" min_lon="-90" interpolation_factor="8" draw_map="False">
+    <layer var_name="current_magnitude" type="colormesh">
+      <params position="bottom" vmin="0" vmax="2"></params>
+    </layer>
+    <layer var_name="current_magnitude" type="contour">
+      <params color='k' linewidths='0.5'></params>
+    </layer>
+    <layer var_name="current_vectors" type="arrows">
+      <params stride_lon="30" stride_lat="30" scale="1"></params>
+    </layer>
+  </layers>
+  <output type='collection'>test_currents_collection</output>
+</template>
