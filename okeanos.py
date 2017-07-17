@@ -57,10 +57,11 @@ class  Okeanos(object):
 #Pasar esto a data_processor
     def process_vars(self):
         self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,self.params.template.variables_dataset.lon.cdata,self.params.template.variables_dataset.time.cdata)
+        reverse_data = False if self.params.template.variables_dataset['reverse'] == "false" else True
         if  not self.data_processor.add_template_dimensions(self.template_dimensions,self.interpolation_factor):
             return False
         variables_dataset = self.process_dataset_variables_parameters()
-        self.data_processor.process_dataset_variables(self.process_dataset_variables_parameters())
+        self.data_processor.process_dataset_variables(self.process_dataset_variables_parameters(),reverse_data)
         variables_template = self.process_template_variables_parameters()
         self.data_processor.process_template_variables(self.process_template_variables_parameters())
         return True
@@ -95,7 +96,8 @@ class  Okeanos(object):
         print("Creating with the lon vars: ", self.template_dimensions)
         map_plotter = MapCreator(self.data_processor.data_output["lat"],self.data_processor.data_output["lon"])
         print(self.params.template.layers.layer)
-        map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
+        if self.params.template.title.cdata != "":
+            map_plotter.add_title(self.params.template.title.cdata,self.params.template.title)
         draw_map = True
         if self.params.template.layers["draw_map"] is not None:
             draw_map = True if self.params.template.layers["draw_map"] == "True" else False
@@ -105,7 +107,8 @@ class  Okeanos(object):
         collection_name = self.params.template.output.cdata
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)
-        map_plotter.create_collection(self.data_processor.data_output,collection_name,200,draw_map)
+        #Para generar una imagen cuadrada se usa una resolucion de 3.2x2.7 despues se cambia para el dpi para lo que sea necesario
+        map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=300,image_width=2.7,image_height=3.2)
 
 def main():
     xml= open(sys.argv[1],"r").read()

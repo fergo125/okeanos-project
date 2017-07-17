@@ -25,7 +25,7 @@ class MapCreator(object):
     #calcular los subindices en el constructor
     #hacer que cuando se agregue un nuevo layer se le pase unicamente los datos y los subindices
     def add_layer(self,template_type,var_name,params):
-        print(layer_switcher)
+        #print(layer_switcher)
         new_layer = layer_switcher[template_type](var_name,self.coordinates_x,self.coordinates_y)
         new_layer.extra_params(params)
         self.layers.append(new_layer)
@@ -44,20 +44,21 @@ class MapCreator(object):
     def extra_params():
         pass
 
-    def create_collection(self,var_data,collection_name,dpi=200,draw_map=True):
-        axis_text = {'fontsize':6}
+    def create_collection(self,var_data,collection_name,dpi_image=200,image_width=1,image_height=1,draw_map=True):
+        y_axis_text = {'fontsize':6,'rotation':270}
+        x_axis_text = {'fontsize':6}
         coordinates_x,coordinates_y =  self.map(*np.meshgrid(var_data["lon"],var_data["lat"]))
         for data_index in range(0,len(var_data['time'])):
-            plt.figure(figsize=(4,4),dpi=170)
-            self.map.drawcoastlines()
+            plt.figure(figsize=(image_width,image_height),dpi=dpi_image,tight_layout=True)
+
+            #plt.tight_layout()
+            self.map.drawcoastlines(linewidth=0.4)
             if draw_map:
-                print("Drawing map")
-                self.map.fillcontinents(color="#A0A0A0")
-            self.map.drawcountries()
-            self.map.drawmapboundary()
-            self.map.drawmapboundary(fill_color=(0.84, 0.82, 0.82))
-            self.map.drawmeridians(np.linspace(var_data['lon'].min(),var_data['lon'].max(),5)[1:],labels=[0,0,0,1],fontdict=axis_text,color='gray',linewidth=0.5)
-            self.map.drawparallels(np.linspace(var_data['lat'].min(),var_data['lat'].max(),5)[1:],labels=[1,0,0,0],fontdict=axis_text,color='gray',linewidth=0.5)
+                self.map.fillcontinents(color="#B4B4B4")
+            self.map.drawcountries(linewidth=0.1)
+            self.map.drawmapboundary(fill_color="#B4B4B4",linewidth=0.3)
+            self.map.drawmeridians(map(lambda x: float(int(x*100))/100,np.linspace(var_data['lon'].min(),var_data['lon'].max(),5)[1:-1]),labels=[0,0,0,1],fontdict=x_axis_text,color='gray',linewidth=0.5)
+            self.map.drawparallels(map(lambda x: float(int(x*100))/100,np.linspace(var_data['lat'].min(),var_data['lat'].max(),5)[1:-1]),labels=[1,0,0,0],fontdict=y_axis_text,color='gray',linewidth=0.5)
             for layer in self.layers:
                 if type(layer) is layer_switcher['title']:
                     layer.render(plt)
@@ -66,5 +67,6 @@ class MapCreator(object):
                 frame_number = str(data_index)
                 save_path = os.path.join(collection_name,collection_name+ frame_number+ '.png')
             print(save_path)
-            plt.savefig(save_path,)
+            plt.tight_layout(pad=0,h_pad=0,w_pad=0,rect=(0,0,1,1))
+            plt.savefig(save_path,pad_inches=0,bbox_inches='tight', transparent="True")
             plt.close()

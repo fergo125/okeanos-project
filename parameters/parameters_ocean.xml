@@ -1,5 +1,5 @@
 <template>
-  <title fontsize="9.5">Pronostico valido para 20170703 15:00 Hora Local</title>
+  <title fontsize="9.5"></title>
   <variables_dataset datasource="Data/test.nc">
     <var output_name="hs">Significant_height_of_combined_wind_waves_and_swell_surface</var>
     <var output_name="angle_wave">Direction_of_wind_waves_surface</var>
@@ -12,19 +12,17 @@
     <var type="normal">hs</var>
     <var type="vector" angle="angle_wave" magnitude="wave_magnitude">ocean_vectors</var>
   </variables_template>
-  <layers max_lat="40" max_lon="290" min_lat="0" min_lon="250" interpolation_factor="5" background_color="" map_color="">
+  <layers max_lat="28" max_lon="290" min_lat="0" min_lon="260" interpolation_factor="5" background_color="" map_color="">
     <layer var_name="hs" type="colormesh">
-      <params position="bottom" vmin="0" vmax="4" color_bar_name="ocean"></params>
+      <params position="bottom" vmin="0" vmax="4" color_bar_name="ocean" units="m/s"></params>
     </layer>
-    <layer var_name="hs" type="contour">
+    <!-- <layer var_name="hs" type="contour">
       <params colors='white' linewidths='1'></params>
-    </layer>
-    <layer var_name="ocean_vectors" type="arrows">
-      <params stride_lat="15" stride_lon="15" scale="20"></params>
-    </layer>
-    <!-- <layer var_name="ocean_vectors" type="stream">
-      <params></params>
     </layer> -->
+    <layer var_name="ocean_vectors" type="arrows">
+      <params stride_lat="20" stride_lon="20" scale="20"></params>
+    </layer>
+
   </layers>
   <output type='collection'>test_ocean_collection</output>
 </template>

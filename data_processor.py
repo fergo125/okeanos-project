@@ -18,22 +18,20 @@ class DataProcessor(object):
         self.data_interpolation_factor =None
         self.sub_indexes = list()
 
-    def process_dataset_variables(self, variables_names):
+    def process_dataset_variables(self, variables_names, reverse_data = True):
         output_coordenates_x, output_coordenates_y = np.meshgrid(self.data_output["lat"],self.data_output["lon"])
+        print("Interpolation lat coordinates:",self.dataset["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:].min(),self.dataset["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:].max())
+        print("Interpolation lon coordinates:",self.dataset["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:].min(),self.dataset["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:].max())
+
         for var in variables_names:
             process_level = True if len(self.dataset[var["entry_name"]].shape) > 3 else False
             data_shape = self.dataset[var["entry_name"]].shape
             self.raw_variables[var["output_name"]] = np.ma.empty((data_shape[0],len(self.data_output["lat"]),len(self.data_output["lon"])))
             #self.raw_variables[var["output_name"]] = np.empty((len(self.data_output["lat"]),len(self.data_output["lon"])))
             for i in range(0,len(self.dataset[var["entry_name"]])):
-                if process_level:
-                    interp_data = self.interpolate_data(self.dataset[var["entry_name"]][i][var["level"]][::-1])
-                else:
-                    interp_data = self.interpolate_data(self.dataset[var["entry_name"]][i][::-1])
-                #print("Var name: ",var["output_name"]," Var type before: ",type(self.raw_variables[var["output_name"]][i]))
-                self.raw_variables[var["output_name"]][i] =  interp_data
-                #np.append(self.raw_variables[var["output_name"]],interp_data)
-                #print("Var name: ",var["output_name"]," Var type: ",type(self.raw_variables[var["output_name"]][i]))
+                var_data = self.dataset[var["entry_name"]][i][var["level"]] if process_level else self.dataset[var["entry_name"]][i]
+                interp_data = self.interpolate_data(var_data)
+                self.raw_variables[var["output_name"]][i] =  interp_data[::-1] if reverse_data else interp_data
 
 
     def process_template_variables(self, variables_names):
@@ -62,23 +60,19 @@ class DataProcessor(object):
             self.data_output[var_name][i] = self.calculate_magnitude(self.raw_variables[component_u][i],self.raw_variables[component_v][i])
 
     def add_vector_var(self,var_name,magnitude_name=None,component_u=None,component_v=None,angle_name=None,convention ="AT"):
-        print("Used magnitude: ",magnitude_name)
-        print("Used u: ",component_u)
-        print("Used v: ",component_v)
-
         data_shape = self.raw_variables[component_u].shape if component_u is not None else self.raw_variables[magnitude_name].shape
-        print("Component Shape: ", data_shape)
+        #print("Component Shape: ", data_shape)
         self.data_output[var_name] = np.empty((data_shape[0],2,data_shape[1],data_shape[2]))
         for i in range(0,len(self.data_output[var_name])):
             angle = None
             magnitude = None
             if component_u is None and component_v is None:
-                #print("Angle input type", type(self.raw_variables[angle_name][i]))
+                ##print("Angle input type", type(self.raw_variables[angle_name][i]))
 
                 angle = 90- (self.raw_variables[angle_name][i] - 180)
                 magnitude = self.raw_variables[magnitude_name][i]
 
-                #print("Angle output type", type(angle))
+                ##print("Angle output type", type(angle))
                 self.data_output[var_name][i][0] = self.calculate_vector_cos(angle)
                 self.data_output[var_name][i][1] = self.calculate_vector_sin(angle)
 
@@ -92,15 +86,15 @@ class DataProcessor(object):
                 self.data_output[var_name][i][1] = np.sin(angle)
 
 
-            #print("Data result:",self.data_output[var_name][i])
+            ##print("Data result:",self.data_output[var_name][i])
 
     def add_template_dimensions(self,template_dimensions,interpolation_factor=3):
-        print('Validating area')
+        #print('Validating area')
         if (template_dimensions[0] <= self.raw_variables['lat'][len(self.raw_variables['lat'])-1] and \
             template_dimensions[1] <= self.raw_variables['lon'][len(self.raw_variables['lon'])-1] and \
             template_dimensions[2] >= self.raw_variables['lat'][0] and \
             template_dimensions[3] >= self.raw_variables['lon'][0]) is False:
-            print("Bad template dimensions")
+            #print("Bad template dimensions")
             return False
 
         self.data_interpolation_factor = interpolation_factor
@@ -112,12 +106,13 @@ class DataProcessor(object):
 
         self.calculate_sub_area(lon_vector,lat_vector,self.data_precision_factor)
 
-        self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes[2]:self.sub_indexes[0]]
-        self.raw_variables["lon"] = self.raw_variables["lon"][self.sub_indexes[3]:self.sub_indexes[1]]
+        self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:]
+        self.raw_variables["lon"] = self.raw_variables["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:]
 
-        print("New latitude vector", self.raw_variables["lat"])
-        print("Interporling latitude")
-        print("Base Lat:",self.raw_variables["lat"].min()," Max Lat:",self.raw_variables["lat"].max()," New size:", self.raw_variables["lat"].shape[0]*interpolation_factor)
+        print("lat vector coordinates sub area", self.raw_variables["lat"].min(), self.raw_variables["lat"].max())
+        print("lon vector coordinates sub area", self.raw_variables["lon"].min(), self.raw_variables["lon"].max())
+        #print("Interporling latitude")
+        #print("Base Lat:",self.raw_variables["lat"].min()," Max Lat:",self.raw_variables["lat"].max()," New size:", self.raw_variables["lat"].shape[0]*interpolation_factor)
 
         self.data_output['lat'] = np.linspace(self.raw_variables["lat"].min(),self.raw_variables["lat"].max(),self.raw_variables["lat"].shape[0]*self.data_interpolation_factor)
         self.data_output['lon'] = np.linspace(self.raw_variables["lon"].min(),self.raw_variables["lon"].max(),self.raw_variables["lon"].shape[0]*self.data_interpolation_factor)
@@ -132,12 +127,16 @@ class DataProcessor(object):
         self.sub_indexes.append(int(abs(lon_vector.max()-base_lon)/precision))
         self.sub_indexes.append(int(abs(lat_vector.min()-base_lat)/precision))
         self.sub_indexes.append(int(abs(lon_vector.min()-base_lon)/precision))
-        print("Sub Indexes: ", self.sub_indexes)
+        #print("Sub Indexes: ", self.sub_indexes)
 
     def interpolate_data(self,data):
-        data_process = data[self.sub_indexes[2]:self.sub_indexes[0]+1:,self.sub_indexes[3]:self.sub_indexes[1]+1:]
-        coordinates_xo,coordinates_yo = np.meshgrid(self.data_output["lon"],self.data_output['lat'])
-        data_interp = interp(data_process,self.raw_variables["lon"],self.raw_variables['lat'],coordinates_xo,coordinates_yo, masked=True)
+        #data_interp = data_process = data[self.sub_indexes[2]:self.sub_indexes[0]+1:,self.sub_indexes[3]:self.sub_indexes[1]+1:]
+        data_interp = data_process = data[self.sub_indexes[2]:self.sub_indexes[0]+1:,self.sub_indexes[3]:self.sub_indexes[1]+1:]
+        data_interp = data_process = data[:]
+        if self.data_interpolation_factor > 1 :
+            coordinates_xo,coordinates_yo = np.meshgrid(self.data_output["lon"],self.data_output['lat'])
+            data_interp = interp(data_process,self.raw_variables["lon"],self.raw_variables['lat'],coordinates_xo,coordinates_yo, masked=True)
+        #print("data interp shape", data_interp.shape)
         return data_interp
 
     def calculate_magnitude(self,component_u,component_v):

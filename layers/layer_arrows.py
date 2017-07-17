@@ -9,7 +9,6 @@ class LayerArrows(Layer):
     def render(self,map,data):
         #print("Vectors data:",data)
         #u,v = map.rotate_vector(self.coordinates_x,self.coordinates_y,data[0],data[1])
-        print("Quiver data type:", type(data[0]))
         map.quiver(self.coordinates_x[int(self.default_params["stride_lon"])::int(self.default_params["stride_lon"]),int(self.default_params["stride_lat"])::int(self.default_params["stride_lat"])],\
                    self.coordinates_y[int(self.default_params["stride_lon"])::int(self.default_params["stride_lon"]),int(self.default_params["stride_lat"])::int(self.default_params["stride_lat"])],\
                    data[0][int(self.default_params["stride_lon"])::int(self.default_params["stride_lon"]),int(self.default_params["stride_lat"])::int(self.default_params["stride_lat"])],\
