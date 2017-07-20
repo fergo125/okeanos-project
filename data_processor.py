@@ -13,15 +13,15 @@ class DataProcessor(object):
         self.raw_variables = dict()
         self.data_output = dict()
         self.template_dimensions = list()
-        self.sub_indexes = list()
+        self.sub_indexes = dict()
         self.data_precision_factor = None
         self.data_interpolation_factor =None
-        self.sub_indexes = list()
+
 
     def process_dataset_variables(self, variables_names, reverse_data = True):
         output_coordenates_x, output_coordenates_y = np.meshgrid(self.data_output["lat"],self.data_output["lon"])
-        print("Interpolation lat coordinates:",self.dataset["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:].min(),self.dataset["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:].max())
-        print("Interpolation lon coordinates:",self.dataset["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:].min(),self.dataset["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:].max())
+        print("Interpolation lat coordinates:",self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].min(),self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].max())
+        print("Interpolation lon coordinates:",self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].min(),self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].max())
 
         for var in variables_names:
             process_level = True if len(self.dataset[var["entry_name"]].shape) > 3 else False
@@ -39,8 +39,8 @@ class DataProcessor(object):
             self.add_var(v['name'],v['type'],v['magnitude'],v['value_u'],v['value_v'],v['angle'])
 
     def add_dimensions_variables(self,lat_name,lon_name,time_name):
-        self.raw_variables["lat"] = np.sort(self.dataset[lat_name][:])
-        self.raw_variables["lon"] = np.sort(self.dataset[lon_name][:])
+        self.raw_variables["lat"] = self.dataset[lat_name][:]
+        self.raw_variables["lon"] = self.dataset[lon_name][:]
         self.data_output['time'] = self.raw_variables['time'] = self.dataset[time_name][:]
         self.data_precision_factor = abs(self.raw_variables["lat"][0]-self.raw_variables["lat"][1])
 
@@ -90,24 +90,24 @@ class DataProcessor(object):
 
     def add_template_dimensions(self,template_dimensions,interpolation_factor=3):
         #print('Validating area')
-        if (template_dimensions[0] <= self.raw_variables['lat'][len(self.raw_variables['lat'])-1] and \
-            template_dimensions[1] <= self.raw_variables['lon'][len(self.raw_variables['lon'])-1] and \
-            template_dimensions[2] >= self.raw_variables['lat'][0] and \
-            template_dimensions[3] >= self.raw_variables['lon'][0]) is False:
+        if (template_dimensions['max_lat'] <= self.raw_variables['lat'].max() and \
+            template_dimensions['max_lon'] <= self.raw_variables['lon'].max() and \
+            template_dimensions['min_lat'] >= self.raw_variables['lat'].min() and \
+            template_dimensions['min_lon'] >= self.raw_variables['lon'].min()) is False:
             #print("Bad template dimensions")
             return False
 
         self.data_interpolation_factor = interpolation_factor
 
-        self.template_dimensions = template_dimensions[:]
+        self.template_dimensions = template_dimensions
 
-        lat_vector = np.arange(template_dimensions[2],template_dimensions[0],self.data_precision_factor)
-        lon_vector = np.arange(template_dimensions[3],template_dimensions[1],self.data_precision_factor)
+        lat_vector = np.arange(template_dimensions['min_lat'],template_dimensions['max_lat'],self.data_precision_factor)
+        lon_vector = np.arange(template_dimensions['min_lon'],template_dimensions['max_lon'],self.data_precision_factor)
 
         self.calculate_sub_area(lon_vector,lat_vector,self.data_precision_factor)
 
-        self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes[3]:self.sub_indexes[1]+1:]
-        self.raw_variables["lon"] = self.raw_variables["lon"][self.sub_indexes[2]:self.sub_indexes[0]+1:]
+        self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:]
+        self.raw_variables["lon"] = self.raw_variables["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:]
 
         print("lat vector coordinates sub area", self.raw_variables["lat"].min(), self.raw_variables["lat"].max())
         print("lon vector coordinates sub area", self.raw_variables["lon"].min(), self.raw_variables["lon"].max())
@@ -123,19 +123,18 @@ class DataProcessor(object):
         base_lat = self.raw_variables["lat"].min()
         base_lon = self.raw_variables["lon"].min()
 
-        self.sub_indexes.append(int(abs(lat_vector.max()-base_lat)/precision))
-        self.sub_indexes.append(int(abs(lon_vector.max()-base_lon)/precision))
-        self.sub_indexes.append(int(abs(lat_vector.min()-base_lat)/precision))
-        self.sub_indexes.append(int(abs(lon_vector.min()-base_lon)/precision))
+        self.sub_indexes['max_lat'] = int(abs(lat_vector.max()-base_lat)/precision)
+        self.sub_indexes['max_lon'] = int(abs(lon_vector.max()-base_lon)/precision)
+        self.sub_indexes['min_lat'] = int(abs(lat_vector.min()-base_lat)/precision)
+        self.sub_indexes['min_lon'] = int(abs(lon_vector.min()-base_lon)/precision)
         #print("Sub Indexes: ", self.sub_indexes)
 
     def interpolate_data(self,data):
         #data_interp = data_process = data[self.sub_indexes[2]:self.sub_indexes[0]+1:,self.sub_indexes[3]:self.sub_indexes[1]+1:]
-        data_interp = data_process = data[self.sub_indexes[2]:self.sub_indexes[0]+1:,self.sub_indexes[3]:self.sub_indexes[1]+1:]
-        data_interp = data_process = data[:]
+        data_interp = data_process = data[self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:,self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:]
         if self.data_interpolation_factor > 1 :
             coordinates_xo,coordinates_yo = np.meshgrid(self.data_output["lon"],self.data_output['lat'])
-            data_interp = interp(data_process,self.raw_variables["lon"],self.raw_variables['lat'],coordinates_xo,coordinates_yo, masked=True)
+            data_interp = interp(data_process,np.sort(self.raw_variables["lon"]),np.sort(self.raw_variables['lat']),coordinates_xo,coordinates_yo, masked=True)
         #print("data interp shape", data_interp.shape)
         return data_interp
 

@@ -30,11 +30,11 @@ class  Okeanos(object):
 #List with names and characteristics of the template variables
         self.variables_template = list()
 
-        self.template_dimensions = list()
-        self.template_dimensions.append(int(self.params.template.layers["max_lat"]))
-        self.template_dimensions.append(int(self.params.template.layers["max_lon"]))
-        self.template_dimensions.append(int(self.params.template.layers["min_lat"]))
-        self.template_dimensions.append(int(self.params.template.layers["min_lon"]))
+        self.template_dimensions = dict()
+        self.template_dimensions['max_lat'] = int(self.params.template.layers["max_lat"])
+        self.template_dimensions['max_lon'] = int(self.params.template.layers["max_lon"])
+        self.template_dimensions['min_lat'] =int(self.params.template.layers["min_lat"])
+        self.template_dimensions['min_lon'] =int(self.params.template.layers["min_lon"])
 
         self.interpolation_factor = int(self.params.template.layers["interpolation_factor"])
 
