@@ -20,8 +20,8 @@ class DataProcessor(object):
 
     def process_dataset_variables(self, variables_names, reverse_data = True):
         output_coordenates_x, output_coordenates_y = np.meshgrid(self.data_output["lat"],self.data_output["lon"])
-        print("Interpolation lat coordinates:",self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].min(),self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].max())
-        print("Interpolation lon coordinates:",self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].min(),self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].max())
+        #print("Interpolation lat coordinates:",self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].min(),self.dataset["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:].max())
+        #print("Interpolation lon coordinates:",self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].min(),self.dataset["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:].max())
 
         for var in variables_names:
             process_level = True if len(self.dataset[var["entry_name"]].shape) > 3 else False
@@ -41,7 +41,8 @@ class DataProcessor(object):
     def add_dimensions_variables(self,lat_name,lon_name,time_name):
         self.raw_variables["lat"] = self.dataset[lat_name][:]
         self.raw_variables["lon"] = self.dataset[lon_name][:]
-        self.data_output['time'] = self.raw_variables['time'] = self.dataset[time_name][:]
+        self.raw_variables['time'] = self.dataset[time_name]
+        self.data_output['time'] = nc.num2date(self.raw_variables['time'][:],self.raw_variables['time'].units,self.raw_variables['time'].calendar)
         self.data_precision_factor = abs(self.raw_variables["lat"][0]-self.raw_variables["lat"][1])
 
 
@@ -125,8 +126,8 @@ class DataProcessor(object):
 
         self.sub_indexes['max_lat'] = int(abs(lat_vector.max()-base_lat)/precision)
         self.sub_indexes['max_lon'] = int(abs(lon_vector.max()-base_lon)/precision)
-        self.sub_indexes['min_lat'] = int(abs(lat_vector.min()-base_lat)/precision)
-        self.sub_indexes['min_lon'] = int(abs(lon_vector.min()-base_lon)/precision)
+        self.sub_indexes['min_lat'] = int(abs(lat_vector.min()-base_lat)/precision -1)
+        self.sub_indexes['min_lon'] = int(abs(lon_vector.min()-base_lon)/precision -1)
         #print("Sub Indexes: ", self.sub_indexes)
 
     def interpolate_data(self,data):
