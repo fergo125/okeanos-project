@@ -126,8 +126,8 @@ class DataProcessor(object):
 
         self.sub_indexes['max_lat'] = int(abs(lat_vector.max()-base_lat)/precision)
         self.sub_indexes['max_lon'] = int(abs(lon_vector.max()-base_lon)/precision)
-        self.sub_indexes['min_lat'] = int(abs(lat_vector.min()-base_lat)/precision -1)
-        self.sub_indexes['min_lon'] = int(abs(lon_vector.min()-base_lon)/precision -1)
+        self.sub_indexes['min_lat'] = int(abs(lat_vector.min()-base_lat)/precision)
+        self.sub_indexes['min_lon'] = int(abs(lon_vector.min()-base_lon)/precision)
         #print("Sub Indexes: ", self.sub_indexes)
 
     def interpolate_data(self,data):

@@ -12,13 +12,11 @@
     <var type="normal">hs</var>
     <var type="vector" angle="angle_wave" magnitude="wave_magnitude">ocean_vectors</var>
   </variables_template>
-  <layers max_lat="28" max_lon="290" min_lat="0" min_lon="260" interpolation_factor="1" background_color="" map_color="">
+  <layers max_lat="30" max_lon="290" min_lat="0" min_lon="260" interpolation_factor="6" background_color="" map_color="">
     <layer var_name="hs" type="colormesh">
       <params position="bottom" vmin="0" vmax="4" color_bar_name="ocean" units="m/s"></params>
     </layer>
-    <!-- <layer var_name="hs" type="contour">
-      <params colors='white' linewidths='1'></params>
-    </layer> -->
+
     <layer var_name="ocean_vectors" type="arrows">
       <params stride_lat="20" stride_lon="20" scale="20"></params>
     </layer>
