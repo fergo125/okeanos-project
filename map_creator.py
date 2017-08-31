@@ -71,7 +71,7 @@ class MapCreator(object):
                     layer.render(self.map,var_data[layer.var_name][data_index])
                 current_date = var_data['time'][data_index]
                 frame_date = current_date.strftime("%d-%m-%Y_%H-%M-%S%Z")
-                output_date =current_date.strftime("%d-%m-%Y %H:%M:%S %Z")
+                output_date =current_date.strftime("%Y-%m-%dT%H:%M:%S%Z")
                 img_name = frame_date+ '.png'
                 save_path = os.path.join(collection_name,img_name)
                 # collection_buffer += img_name + ","+ output_date + "\n"
