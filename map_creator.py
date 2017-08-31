@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 from layers.layer import Layer,layer_switcher
-import json
+import csv
 import os
 
 
@@ -48,12 +48,15 @@ class MapCreator(object):
     def create_collection(self,var_data,collection_name,dpi_image=200,image_width=1,image_height=1,draw_map=True):
         y_axis_text = {'fontsize':6,'rotation':270}
         x_axis_text = {'fontsize':6}
+        #Las coordenadas que se van a usar para crea el mapa y despues generar una visualizacion.
         coordinates_x,coordinates_y =  self.map(*np.meshgrid(var_data["lon"],var_data["lat"]))
-        collection_dict = dict()
-        for data_index in range(0,len(var_data['time'])):
+        #collection_dict = dict()
+        csv_header = ["name","date"]
+        collection_csv = file(os.path.join(collection_name, 'collection.csv'),'wb')
+        csv_writer = csv.DictWriter(collection_csv,fieldnames=csv_header)
+        csv_writer.writeheader()
+        for data_index in range(0, len(var_data['time'])):
             plt.figure(figsize=(image_width,image_height),dpi=dpi_image,tight_layout=True)
-
-            #plt.tight_layout()
             self.map.drawcoastlines(linewidth=0.4)
             if draw_map:
                 self.map.fillcontinents(color="#B4B4B4")
@@ -69,13 +72,15 @@ class MapCreator(object):
                 current_date = var_data['time'][data_index]
                 frame_date = current_date.strftime("%d-%m-%Y_%H-%M-%S%Z")
                 output_date =current_date.strftime("%d-%m-%Y %H:%M:%S %Z")
-                img_name = collection_name+'_'+frame_date+ '.png'
+                img_name = frame_date+ '.png'
                 save_path = os.path.join(collection_name,img_name)
-                collection_dict[img_name] = output_date
+                # collection_buffer += img_name + ","+ output_date + "\n"
+                csv_writer.writerow({"name":img_name,"date":output_date})
             print(save_path)
-            plt.tight_layout(pad=0,h_pad=0,w_pad=0,rect=(0,0,1,1))
-            plt.savefig(save_path,pad_inches=0,bbox_inches='tight', transparent="True")
+            plt.tight_layout(pad=0, h_pad=0, w_pad=0, rect=(0, 0, 1, 1))
+            plt.savefig(save_path, pad_inches=0, bbox_inches='tight', transparent="True")
             plt.close()
-        json_file = file(os.path.join(collection_name,collection_name+'.json'),'wb')
-        json_file.write(json.dumps(collection_dict))
-        json_file.close()
+        collection_csv.close()
+        # json_file = file(os.path.join(collection_name, 'collection.csv'),'wb')
+        # json_file.write(json.dumps(collection_dict))
+        # json_file.close()

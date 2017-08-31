@@ -1,21 +1,15 @@
-import untangle
-import netCDF4
-from netCDF4 import num2date, date2num
-import time
-import datetime
-import numpy as np
+"""docstring for  Okeanos."""
 import os
-#import map_plotter_creator
 import sys
-#import map_plotter_creator.map_plotterCreator
+import untangle
 from map_creator import MapCreator
-from layers import layer_contour,layer_colormesh,layer_title,layer_arrows,layer_stream
+from layers import layer_contour, layer_colormesh, layer_title, layer_arrows, layer_stream
 from data_processor import DataProcessor
 
 reload(sys) # just to be sure
 sys.setdefaultencoding('utf-8')
 
-class  Okeanos(object):
+class Okeanos(object):
     """docstring for  Okeanos."""
     def __init__(self, params, dataset_name):
         self.params = params
@@ -33,8 +27,8 @@ class  Okeanos(object):
         self.template_dimensions = dict()
         self.template_dimensions['max_lat'] = int(self.params.template.layers["max_lat"])
         self.template_dimensions['max_lon'] = int(self.params.template.layers["max_lon"])
-        self.template_dimensions['min_lat'] =int(self.params.template.layers["min_lat"])
-        self.template_dimensions['min_lon'] =int(self.params.template.layers["min_lon"])
+        self.template_dimensions['min_lat'] = int(self.params.template.layers["min_lat"])
+        self.template_dimensions['min_lon'] = int(self.params.template.layers["min_lon"])
 
         self.interpolation_factor = int(self.params.template.layers["interpolation_factor"])
 
@@ -43,7 +37,7 @@ class  Okeanos(object):
         #self.longitude_array = self.dataset[params.template.variables.lon.cdata][:]
 
 #The data processor is in charge to put the data in the right format for the map creation
-        self.data_processor =  DataProcessor(dataset_name)
+        self.data_processor = DataProcessor(dataset_name)
 
 #this vectors are no longer necesary
         #self.variables_data['time'] = self.dataset[params.template.variables.time.cdata][:]
@@ -104,14 +98,14 @@ class  Okeanos(object):
         for layer in self.params.template.layers.layer:
             print('Creating layer type:',layer['type'])
             map_plotter.add_layer(layer['type'],layer['var_name'],layer.params)
-        collection_name = self.params.template.output.cdata
+        collection_name = os.path.normpath(self.params.template.output.cdata)
         if not os.path.exists(collection_name):
             os.makedirs(collection_name)
         #Para generar una imagen cuadrada se usa una resolucion de 3.2x2.7 despues se cambia para el dpi para lo que sea necesario
         map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=300,image_width=2.7,image_height=3.2)
 
-def main():
-    xml= open(sys.argv[1],"r").read()
+def okeanos_invoker(xmlfilename):
+    xml= open(xmlfilename,"r").read()
     print("Params read")
     params = untangle.parse(xml)
     print("Cargando Archivo:", params.template.variables_dataset["datasource"])
@@ -122,6 +116,10 @@ def main():
         okeanos.launch()
     else:
         print("Error processing parameters")
+
+
+def main():
+    okeanos_invoker(sys.argv[1])
 
 if __name__=="__main__":
     main()

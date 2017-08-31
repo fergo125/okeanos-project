@@ -1,8 +1,6 @@
 import netCDF4 as nc
 import numpy as np
 import os
-import scipy as sp
-from scipy import interpolate
 from mpl_toolkits.basemap import interp
 
 class DataProcessor(object):
