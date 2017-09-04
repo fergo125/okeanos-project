@@ -53,7 +53,7 @@ def post_images(images_csv, forecast_id, region_source_directory):
             images_result.append({\
             "forecast_id":forecast_id,\
             "date":image_data['date'],\
-            "url":HOSTNAME +region_source_directory + image_data["name"]\
+            "url":HOSTNAME+ '/' +region_source_directory + image_data["name"]\
             })
     print(images_result)
     request_response = r.post(API_HOST_ENPOINT_DIR, json=images_result,headers={"Content-Type":"application/json"})
