@@ -5,10 +5,10 @@ import json
 import okeanos
 import csv
 
-API_HOST_ENPOINT_DIR = 'http://localhost:8000/api/regional_forecasts_slides/'
+API_HOST_ENPOINT_DIR = 'https://mio-cimar-preview.herokuapp.com/api/regional_forecasts_slides/'
 #IMAGES_SOURCE_DIRECTORY = 'example'
 REGIONS_FILE = 'regions.csv'
-HOSTNAME="localhost/"
+HOSTNAME="miocimar.ucr.ac.cr"
 #format var_names = {'folder_name':'area_id'}
 
 ''''sdfsdf'''
