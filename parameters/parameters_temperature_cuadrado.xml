@@ -13,9 +13,9 @@
     <layer var_name="temperature-magnitude" type="colormesh">
       <params position="bottom" vmin="27" vmax="34" colorbar="jet" units="C"></params>
     </layer>
-    <!-- <layer var_name="temperature-magnitude" type="contour">
+    <layer var_name="temperature-magnitude" type="contour">
       <params colors='black' linewidths='0.3'></params>
-    </layer> -->
+    </layer>
   </layers>
   <output type='collection'>test_temperature_collection</output>
 </template>

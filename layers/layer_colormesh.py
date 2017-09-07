@@ -9,7 +9,8 @@ class LayerColormesh(Layer):
                                 'vmin':None,\
                                 'vmax':None,\
                                 'colorbar':"jet",\
-                                'units':None
+                                'units':None,\
+                                'segments':None
                                 }
 
     def render(self,map,data):
@@ -17,7 +18,9 @@ class LayerColormesh(Layer):
             self.default_params['vmin'] = data.min()
             self.default_params['vmax'] = data.max()
 
-        self.colormesh = map.pcolormesh(self.coordinates_x,self.coordinates_y,data.squeeze(),cmap=plt.cm.get_cmap(self.default_params['colorbar']),\
+        if self.default_params['segments'] is not None:
+            mycmap=plt.cm.get_cmap(self.default_params['colorbar'], lut=int(self.default_params["segments"]))
+        self.colormesh = map.pcolormesh(self.coordinates_x,self.coordinates_y,data.squeeze(),cmap=mycmap,\
         shading=self.default_params['shading'],vmax=float(self.default_params['vmax']),vmin=float(self.default_params['vmin']))
         bar = map.colorbar(self.colormesh,location=self.default_params['position'],pad=float(self.default_params["pad"]))
         bar.ax.tick_params(labelsize=7)

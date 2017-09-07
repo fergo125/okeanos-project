@@ -1,6 +1,6 @@
 <template>
   <title fontsize="15" ></title>
-  <variables_dataset datasource="Data/data_currents.nc" reverse="false">
+  <variables_dataset datasource="okeanos-project/Data/data_currents.nc" reverse="false">
     <var level="0" output_name="u-component-current">uo</var>
     <var level="0" output_name="v-component-current">vo</var>
     <time>time</time>
@@ -12,7 +12,7 @@
     <var value_u="u-component-current" value_v="v-component-current" type="vector">current_vectors</var>
   </variables_template>
   <layers max_lat="14" max_lon="-80" min_lat="4" min_lon="-90" interpolation_factor="8" >
-    <layer var_name="current_magnitude" type="colormesh">
+    <layer var_name="current_magnitude" type="colormesh" >
       <params position="bottom" vmin="0" vmax="2" colorbar="rainbow" units="ks"></params>
     </layer>
     <!-- <layer var_name="current_magnitude" type="contour">
@@ -22,5 +22,5 @@
       <params stride_lon="50" stride_lat="50" scale="500" color="white"></params>
     </layer>
   </layers>
-  <output type='collection'>collections/currents</output>
+  <output type='collection'>okeanos-project/collections/currents</output>
 </template>
