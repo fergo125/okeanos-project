@@ -20,6 +20,8 @@ class LayerColormesh(Layer):
 
         if self.default_params['segments'] is not None:
             mycmap=plt.cm.get_cmap(self.default_params['colorbar'], lut=int(self.default_params["segments"]))
+        else:
+            mycmap=plt.cm.get_cmap(self.default_params['colorbar'])
         self.colormesh = map.pcolormesh(self.coordinates_x,self.coordinates_y,data.squeeze(),cmap=mycmap,\
         shading=self.default_params['shading'],vmax=float(self.default_params['vmax']),vmin=float(self.default_params['vmin']))
         bar = map.colorbar(self.colormesh,location=self.default_params['position'],pad=float(self.default_params["pad"]))
