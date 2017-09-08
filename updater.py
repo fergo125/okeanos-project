@@ -6,14 +6,17 @@ import okeanos
 import csv
 import argparse
 
-API_HOST_ENPOINT_DIR = 'https://mio-cimar-preview.herokuapp.com/api/regional_forecasts_slides/'
-#IMAGES_SOURCE_DIRECpTORY = 'example'
-REGIONS_FILE = 'regions.csv'
-HOSTNAME="miocimar.ucr.ac.cr"
+#IMAGES_SOURCE_DIRECTORY = 'example'
+API_HOST_ENPOINT_DIR= ""
+REGIONS_FILE= ""
+HOSTNAME= ""
 #format var_names = {'folder_name':'area_id'}
 
 ''''sdfsdf'''
 def main():
+    global API_HOST_ENPOINT_DIR
+    global REGIONS_FILE
+    global HOSTNAME
     parser = argparse.ArgumentParser(description='Update process for images')
     parser.add_argument('-r','--region',  type=str)
     parser.add_argument('-l','--local',  type=str)
@@ -21,16 +24,16 @@ def main():
     args = parser.parse_args()
     API_HOST_ENPOINT_DIR = args.endpoint
     REGIONS_FILE = args.region
-    HOSTNAME =  args.local
+    HOSTNAME = args.local
     print(API_HOST_ENPOINT_DIR,REGIONS_FILE,HOSTNAME)
     slides_updater()
 
 def slides_updater():
     print("Region's file name:", REGIONS_FILE)
-    #regions = os.path(REGIONS_FILE)
+    # regions = os.path(REGIONS_FILE)
     # collection_file = file(REGIONS_FILE, 'r').read()
     # regions_data = json.loads(collection_file)
-    #images_path = os.path.abspath(IMAGES_SOURCE_DIRECTORY)
+    # images_path = os.path.abspath(IMAGES_SOURCE_DIRECTORY)
     with open(REGIONS_FILE,'r') as regions_file:
         regions_data = csv.DictReader(regions_file)
         print(regions_data)
