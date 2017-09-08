@@ -4,15 +4,24 @@ import requests as r
 import json
 import okeanos
 import csv
+import argparse
 
 API_HOST_ENPOINT_DIR = 'https://mio-cimar-preview.herokuapp.com/api/regional_forecasts_slides/'
-#IMAGES_SOURCE_DIRECTORY = 'example'
+#IMAGES_SOURCE_DIRECpTORY = 'example'
 REGIONS_FILE = 'regions.csv'
 HOSTNAME="miocimar.ucr.ac.cr"
 #format var_names = {'folder_name':'area_id'}
 
 ''''sdfsdf'''
 def main():
+    parser = argparse.ArgumentParser(description='Update process for images')
+    parser.add_argument('-r','--region',  type=str)
+    parser.add_argument('-l','--local',  type=str)
+    parser.add_argument('-e','--endpoint',  type=str)
+    args = parser.parse_args()
+    API_HOST_ENPOINT_DIR = args.endpoint
+    REGIONS_FILE = args.region
+    HOSTNAME =  args.local
     slides_updater()
 
 def slides_updater():
@@ -31,7 +40,7 @@ def slides_updater():
             okeanos.okeanos_invoker(region['parameters_file'])
             for f in os.listdir(region["images_source_directory"]):
                 if f.endswith(".csv"):
-                    post_images(os.path.join(region["images_source_directory"],f), region["forecast_id"],region["images_source_directory"])
+                    post_images(os.path.join(region["images_source_directory"],f), region["forecast_id"],region["local_direction"])
 def delete_old_files(directory):
     print(os.path.abspath(directory))
     walker = os.walk(os.path.abspath(directory))
@@ -43,7 +52,7 @@ def delete_old_files(directory):
     # if len(filenames) > 0:
     #          os.remove(os.path.join(dirpath, filename))
     #      for filename in filenames:
-def post_images(images_csv, forecast_id, region_source_directory):
+def post_images(images_csv, forecast_id, region_entrypoint):
     images_result = list()
     #print(images_data)
     with open(images_csv) as images_file:
@@ -53,7 +62,7 @@ def post_images(images_csv, forecast_id, region_source_directory):
             images_result.append({\
             "forecast_id":forecast_id,\
             "date":image_data['date'],\
-            "url":HOSTNAME+ '/' +region_source_directory + image_data["name"]\
+            "url":HOSTNAME+ '/' +region_entrypoint + image_data["name"]\
             })
     print(images_result)
     request_response = r.post(API_HOST_ENPOINT_DIR, json=images_result,headers={"Content-Type":"application/json"})
