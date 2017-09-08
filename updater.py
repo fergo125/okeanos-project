@@ -22,6 +22,7 @@ def main():
     API_HOST_ENPOINT_DIR = args.endpoint
     REGIONS_FILE = args.region
     HOSTNAME =  args.local
+    print(API_HOST_ENPOINT_DIR,REGIONS_FILE,HOSTNAME)
     slides_updater()
 
 def slides_updater():
