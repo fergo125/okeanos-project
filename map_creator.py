@@ -77,7 +77,7 @@ class MapCreator(object):
                 img_name = frame_date+ '.png'
                 save_path = os.path.join(collection_name,img_name)
                 # collection_buffer += img_name + ","+ output_date + "\n"
-                csv_writer.writerow({"name":img_name,"date":output_date})
+            csv_writer.writerow({"name":img_name,"date":output_date})
             print(save_path)
             plt.tight_layout(pad=0, h_pad=0, w_pad=0, rect=(0, 0, 1, 1))
             plt.savefig(save_path, pad_inches=0, bbox_inches='tight', transparent="True")
