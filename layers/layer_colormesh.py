@@ -13,7 +13,7 @@ class LayerColormesh(Layer):
                                 'segments':None
                                 }
 
-    def render(self,map,data):
+    def render(self,map,data,plt):
         if self.default_params['vmin'] is None and self.default_params['vmax'] is None:
             self.default_params['vmin'] = data.min()
             self.default_params['vmax'] = data.max()

@@ -6,7 +6,7 @@ class LayerArrows(Layer):
         self.default_params = {'color':'k','stride_lat':"8",'stride_lon':"8",'scale':"800",'head_width': 0.04, 'head_length': 0.04, 'width': 0.02,
         'length_includes_head': True}
 
-    def render(self,map,data):
+    def render(self,map,data,plt):
         #print("Vectors data:",data)
         #u,v = map.rotate_vector(self.coordinates_x,self.coordinates_y,data[0],data[1])
         map.quiver(self.coordinates_x[int(self.default_params["stride_lon"])::int(self.default_params["stride_lon"]),int(self.default_params["stride_lat"])::int(self.default_params["stride_lat"])],\

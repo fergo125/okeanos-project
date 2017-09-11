@@ -70,7 +70,7 @@ class MapCreator(object):
                 if type(layer) is layer_switcher['title']:
                     layer.render(plt)
                 else:
-                    layer.render(self.map,var_data[layer.var_name][data_index])
+                    layer.render(self.map,var_data[layer.var_name][data_index],plt)
                 current_date = var_data['time'][data_index]
                 frame_date = current_date.strftime("%d-%m-%Y_%H-%M-%S%Z")
                 output_date =current_date.strftime("%Y-%m-%dT%H:%M:%S%Z")

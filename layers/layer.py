@@ -14,7 +14,7 @@ class Layer(object):
         self.var_name = var_name
 
 
-    def render(self, map, data):
+    def render(self, map, data,plt):
         pass
 
     def extra_params(self, params_dict):
