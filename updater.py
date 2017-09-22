@@ -30,10 +30,6 @@ def main():
 
 def slides_updater():
     print("Region's file name:", REGIONS_FILE)
-    # regions = os.path(REGIONS_FILE)
-    # collection_file = file(REGIONS_FILE, 'r').read()
-    # regions_data = json.loads(collection_file)
-    # images_path = os.path.abspath(IMAGES_SOURCE_DIRECTORY)
     with open(REGIONS_FILE,'r') as regions_file:
         regions_data = csv.DictReader(regions_file)
         print(regions_data)

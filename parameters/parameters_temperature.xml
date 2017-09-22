@@ -17,5 +17,5 @@
       <params colors='black' linewidths='0.3' step="0.5" labels="True" fontsize="6" fmt='%1.1f'></params>
     </layer>
   </layers>
-  <output type='collection'>test_temperature_collection</output>
+  <output type='images'>test_temperature_collection</output>
 </template>

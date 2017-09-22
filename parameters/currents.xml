@@ -22,5 +22,5 @@
       <params stride_lon="50" stride_lat="50" scale="500" color="white"></params>
     </layer>
   </layers>
-  <output type='collection'>okeanos-project/collections/currents</output>
+  <output type='images'>okeanos-project/collections/currents</output>
 </template>
