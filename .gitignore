@@ -4,3 +4,4 @@
 collections/*/*.csv
 *.txt
 *.rar
+/.vscode/*
