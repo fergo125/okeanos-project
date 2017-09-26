@@ -25,7 +25,11 @@ class Okeanos(object):
 #List with names and characteristics of the template variables
 		self.variables_template = list()
 
-		self.data_processor = DataProcessor(dataset_name, self.params.template.variables_dataset['type'])
+		dataset_var_type = self.params.template.variables_dataset['type']
+		if dataset_var_type == "multiple":
+			self.data_processor = DataProcessor(dataset_name, dataset_var_type,self.params.template.variables_dataset['aggregation'])			
+		else:
+			self.data_processor = DataProcessor(dataset_name, dataset_var_type)
 
 		self.reverse_data = False if self.params.template.variables_dataset['reverse'] == "false" else True
 		

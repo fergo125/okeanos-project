@@ -1,17 +1,18 @@
 import netCDF4 as nc
 import numpy as np
 import os
+import glob
 from mpl_toolkits.basemap import interp
 
 class DataProcessor(object):
 	#Recibe un pathname creado con os.path.abspath
-	def __init__(self, dataset_name, dataset_type="single"):
+	def __init__(self, dataset_name, dataset_type="single",aggregation=None):
+		file_path = os.path.abspath(dataset_name)
 		if dataset_type == "single":
-			file_path = os.path.abspath(dataset_name)
 			self.dataset = nc.Dataset(file_path, 'r')
 		if dataset_type == "multiple":
-			file_path = os.path.abspath(dataset_name)
-			self.dataset = nc.MFDataset(file_path, 'r')
+			glob_file_path = glob.glob(file_path)
+			self.dataset = nc.MFDataset(glob_file_path, aggdim=aggregation)
 		self.raw_variables = dict()
 		self.data_output = dict()
 		self.template_dimensions = list()
