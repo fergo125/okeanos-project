@@ -1,2 +1,2 @@
 forecast_id,parameters_file,images_source_directory,local_direction
-13,parameters/currents.xml,collections/currents,collections/currents
+13,okeanos/parameters/currents.xml,public_html/miocimar_production/collections,collections/currents
