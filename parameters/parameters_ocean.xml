@@ -1,6 +1,6 @@
 <template>
   <title fontsize="9.5"></title>
-  <variables_dataset datasource="Data/ocean.nc">
+  <variables_dataset datasource="Data/ocean0.nc" type="single">
     <var output_name="hs">Significant_height_of_combined_wind_waves_and_swell_surface</var>
     <var output_name="angle_wave">Primary_wave_direction_surface</var>
     <var output_name="wave_magnitude">Significant_height_of_combined_wind_waves_and_swell_surface</var>
