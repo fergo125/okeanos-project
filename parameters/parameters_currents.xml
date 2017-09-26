@@ -1,6 +1,6 @@
 <template>
   <title fontsize="15" ></title>
-  <variables_dataset datasource="Data/data_currents.nc" reverse="false">
+  <variables_dataset datasource="Data/data_currents.nc" reverse="false" type="single">
     <var level="0" output_name="u-component-current">uo</var>
     <var level="0" output_name="v-component-current">vo</var>
     <time>time</time>

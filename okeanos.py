@@ -25,12 +25,19 @@ class Okeanos(object):
 #List with names and characteristics of the template variables
 		self.variables_template = list()
 
-		self.data_processor = DataProcessor(dataset_name)
+		dataset_var_type = self.params.template.variables_dataset['type']
+		if dataset_var_type == "multiple":
+			self.data_processor = DataProcessor(dataset_name, dataset_var_type,self.params.template.variables_dataset['aggregation'])			
+		else:
+			self.data_processor = DataProcessor(dataset_name, dataset_var_type)
 
+		self.reverse_data = False if self.params.template.variables_dataset['reverse'] == "false" else True
+		
 		#Se agrega las dimensiones del dataset
 		self.data_processor.add_dimensions_variables(self.params.template.variables_dataset.lat.cdata,\
 													self.params.template.variables_dataset.lon.cdata,\
-													self.params.template.variables_dataset.time.cdata)
+													self.params.template.variables_dataset.time.cdata,\
+													self.reverse_data)
 		
 		if self.params.template.output["type"] == "images":
 			self.template_dimensions = dict()
@@ -67,8 +74,7 @@ class Okeanos(object):
 #Pasar esto a data_processor
 	def process_vars(self):
 		#De ser necesario revertir los datos se revierten
-		reverse_data = False if self.params.template.variables_dataset['reverse'] == "false" else True
-		
+	
 		if  not self.data_processor.add_template_dimensions(self.template_dimensions,self.interpolation_factor):
 			return False
 		
@@ -76,7 +82,7 @@ class Okeanos(object):
 		variables_dataset = self.process_dataset_variables_parameters()
 		
 		#Se extraen y se revierten los datos de las variables del dataset que se van a usar
-		self.data_processor.process_dataset_area(variables_dataset,reverse_data)
+		self.data_processor.process_dataset_area(variables_dataset,self.reverse_data)
 		
 		#Se extraen los nombres de las variables como se van a usar en la plantilla
 		self.variables_template = self.process_template_variables_parameters()
@@ -132,7 +138,7 @@ class Okeanos(object):
 			draw_map = True if self.params.template.layers["draw_map"] == "True" else False
 		for layer in self.params.template.layers.layer:
 			map_plotter.add_layer(layer['type'],layer['var_name'],layer.params)
-		map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=300,image_width=2.7,image_height=3.2)
+		map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=150,image_width=2.7,image_height=3.2)
 	
 	def create_points(self,collection_name):
 		csv_data_points = list()
