@@ -5,15 +5,23 @@ from mpl_toolkits.basemap import interp
 
 class DataProcessor(object):
 	#Recibe un pathname creado con os.path.abspath
-	def __init__(self, dataset_name):
-		file_path = os.path.abspath(dataset_name)
-		self.dataset = nc.Dataset(file_path, 'r')
+	def __init__(self, dataset_name, dataset_type):
+		if dataset_type == "single":
+			file_path = os.path.abspath(dataset_name)
+			self.dataset = nc.Dataset(file_path, 'r')
+		if dataset_type == "multiple":
+			file_path = os.path.abspath(dataset_name)
+			self.dataset = nc.MFDataset(file_path, 'r')
 		self.raw_variables = dict()
 		self.data_output = dict()
 		self.template_dimensions = list()
 		self.sub_indexes = dict()
 		self.data_precision_factor = None
 		self.data_interpolation_factor =None
+		self.lat_invert = False
+		self.lon_inver = False
+		self.lon_size = None
+		self.lat_size = None
 
 
 	def process_dataset_area(self, variables_names, reverse_data = True):
@@ -99,10 +107,12 @@ class DataProcessor(object):
 
 		lat_vector = np.arange(template_dimensions['min_lat'],template_dimensions['max_lat']+ self.data_precision_factor,self.data_precision_factor)
 		lon_vector = np.arange(template_dimensions['min_lon'],template_dimensions['max_lon']+ self.data_precision_factor,self.data_precision_factor)
-
+		self.lat_size = float(self.raw_variables['lat'].shape[0]) - 1
+		self.lon_size = float(self.raw_variables['lon'].shape[0]) - 1
 		self.calculate_sub_area(lon_vector,lat_vector,self.data_precision_factor)
 
-		self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes['min_lat']:self.sub_indexes['max_lat']+1:]
+		if self.raw_variables['lat'][0] > self.raw_variables['lat'][self.lat_size-1]:
+			self.raw_variables["lat"] = self.raw_variables["lat"][self.sub_indexes['max_lat']:self.sub_indexes['min_lat']+1:]
 		self.raw_variables["lon"] = self.raw_variables["lon"][self.sub_indexes['min_lon']:self.sub_indexes['max_lon']+1:]
 
 		print("lat vector coordinates sub area", self.raw_variables["lat"].min(), self.raw_variables["lat"].max())
@@ -128,7 +138,18 @@ class DataProcessor(object):
 		self.sub_indexes['max_lat'] = self.calculate_sub_index(lat_vector.max(),base_lat,precision) 
 		self.sub_indexes['max_lon'] = self.calculate_sub_index(lon_vector.max(),base_lon,precision) 
 		self.sub_indexes['min_lat'] = self.calculate_sub_index(lat_vector.min(),base_lat,precision) 
-		self.sub_indexes['min_lon'] = self.calculate_sub_index(lon_vector.min(),base_lon,precision) 
+		self.sub_indexes['min_lon'] = self.calculate_sub_index(lon_vector.min(),base_lon,precision)
+
+		
+		print("lat/lon sizes ", self.lat_size, self.lon_size)
+		print("Sub Indexes: ", self.sub_indexes)
+		if self.raw_variables['lat'][0] > self.raw_variables['lat'][self.lat_size-1]:
+			self.sub_indexes["max_lat"] = self.lat_size - self.sub_indexes["max_lat"]
+			self.sub_indexes["min_lat"] = self.lat_size - self.sub_indexes["min_lat"]
+		if self.raw_variables['lon'][0] > self.raw_variables['lon'][self.lon_size-1]:
+			self.sub_indexes["max_lon"] = self.lon_size - self.sub_indexes["max_lon"]
+			self.sub_indexes["min_lon"] = self.lon_size - self.sub_indexes["min_lon"]
+			 
 		print("Sub Indexes: ", self.sub_indexes)
 	
 	def calculate_sub_index(self,point,base,precision):

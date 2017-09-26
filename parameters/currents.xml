@@ -15,9 +15,6 @@
     <layer var_name="current_magnitude" type="colormesh" >
       <params position="bottom" vmin="0" vmax="2" colorbar="rainbow" units="ks"></params>
     </layer>
-    <!-- <layer var_name="current_magnitude" type="contour">
-      <params color='k' linewidths='0.5'></params>
-    </layer> -->
     <layer var_name="current_vectors" type="arrows" >
       <params stride_lon="50" stride_lat="50" scale="500" color="white"></params>
     </layer>

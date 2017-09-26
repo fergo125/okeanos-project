@@ -132,7 +132,7 @@ class Okeanos(object):
 			draw_map = True if self.params.template.layers["draw_map"] == "True" else False
 		for layer in self.params.template.layers.layer:
 			map_plotter.add_layer(layer['type'],layer['var_name'],layer.params)
-		map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=300,image_width=2.7,image_height=3.2)
+		map_plotter.create_collection(self.data_processor.data_output,collection_name,draw_map = draw_map,dpi_image=150,image_width=2.7,image_height=3.2)
 	
 	def create_points(self,collection_name):
 		csv_data_points = list()
