@@ -12,6 +12,7 @@ class DataProcessor(object):
 			self.dataset = nc.Dataset(file_path, 'r')
 		if dataset_type == "multiple":
 			glob_file_path = glob.glob(file_path)
+			#print(glob_file_path)
 			self.dataset = nc.MFDataset(glob_file_path, aggdim=aggregation)
 		self.raw_variables = dict()
 		self.data_output = dict()
@@ -57,6 +58,14 @@ class DataProcessor(object):
 			self.add_magnitude_var(var_name,component_u, component_v)
 		if var_type == 'vector':
 			self.add_vector_var(var_name,magnitude,component_u, component_v,angle)
+		if var_type == "coeficient":
+			self.add_coeficient_var(var_name,magnitude)
+	
+	def add_coeficient_var(self,var_name,magnitude):
+		data_shape = self.raw_variables[var_name].shape
+		self.data_output[var_name] = np.empty(data_shape)
+		for i in range(0,len(self.data_output[var_name])):
+			self.data_output[var_name][i] = self.raw_variables[var_name][i]*float(magnitude)
 
 	def add_magnitude_var(self,var_name,component_u,component_v):
 		data_shape = self.raw_variables[component_u].shape

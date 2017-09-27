@@ -37,5 +37,8 @@ class PointCreator(object):
 							#print(data[var_name][i])
 							if point["filename"] == "puntarenas":
 								print(data[var_name][i][point['lat']-5:point['lat']+5][point['lon']-5:point['lon']+5])
-							row[var_name] = data[var_name][i][point['lat']][point['lon']]
+							value = str(data[var_name][i][point['lat']][point['lon']])
+							if value == "--":
+								value = "0"
+							row[var_name] = value
 					csv_writer.writerow(row)
