@@ -36,12 +36,13 @@ def slides_updater():
 		print(regions_data)
 		for region in regions_data:
 			print(region)
-			if os.path.exists(os.path.normpath(region['images_source_directory'])):
-				delete_old_files(region['images_source_directory'])
+			#if os.path.exists(os.path.normpath(region['images_source_directory'])):
+				#delete_old_files(region['images_source_directory'])
+			print(region['parameters_file'])	
 			okeanos.okeanos_invoker(region['parameters_file'])
 			for f in os.listdir(region["images_source_directory"]):
 				if f.endswith(".csv"):
-					post_images(os.path.join(region["images_source_directory"],f), region["forecast_id"],region["local_direction"])
+					post_images(region["images_source_directory"], region["forecast_id"],region["local_direction"],f)
 def delete_old_files(directory):
 	print(os.path.abspath(directory))
 	walker = os.walk(os.path.abspath(directory))
@@ -53,22 +54,26 @@ def delete_old_files(directory):
 	# if len(filenames) > 0:
 	#          os.remove(os.path.join(dirpath, filename))
 	#      for filename in filenames:
-def post_images(images_csv, forecast_id, region_entrypoint):
+def post_images(collection_dir, forecast_id, region_entrypoint,csv_filename):
 	images_result = list()
 	#print(images_data)
-	parent_dir = os.path.basename(images_csv)
+	images_csv = os.path.join(collection_dir,csv_filename)
 	time_now = datetime.datetime.now()
 	new_dir_name = time_now.strftime("%Y-%m-%d_%I:%M:%S")	
-	new_dir_parent = os.path.join(parent_dir,new_dir_name)
+	new_dir_parent = os.path.join(collection_dir,new_dir_name)
 	os.makedirs(new_dir_parent)
+	print(new_dir_parent)
 	with open(images_csv) as images_file:
 		images_data = csv.DictReader(images_file)
-		for image_data in images_data:		
-			os.rename(parent_dir+images_csv,new_dir_parent+images_csv)
+		for image_data in images_data:
+			old_file = os.path.join(collection_dir,image_data["name"])
+			new_file = os.path.join(new_dir_parent,image_data["name"])
+			#open(new_file,"w").close()
+			os.rename(old_file,new_file)
 			images_result.append({\
 			"forecast_id":forecast_id,\
 			"date":image_data['date'],\
-			"url":HOSTNAME+ '/' +region_entrypoint + image_data["name"]\
+			"url":HOSTNAME+ '/' +region_entrypoint+new_dir_name +"/" + image_data["name"]\
 			})
 	print(images_result)
 	request_response = r.post(API_HOST_ENPOINT_DIR, json=images_result,headers={"Content-Type":"application/json"})
