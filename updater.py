@@ -26,7 +26,7 @@ def main():
 	API_HOST_ENPOINT_DIR = args.endpoint
 	REGIONS_FILE = args.region
 	HOSTNAME = args.local
-	print(API_HOST_ENPOINT_DIR,REGIONS_FILE,HOSTNAME)
+	print(API_HOST_ENPOINT_DIR, REGIONS_FILE,HOSTNAME)
 	slides_updater()
 
 def slides_updater():
@@ -58,6 +58,7 @@ def post_images(collection_dir, forecast_id, region_entrypoint,csv_filename):
 	images_result = list()
 	#print(images_data)
 	images_csv = os.path.join(collection_dir,csv_filename)
+	parent_dir = os.path.normpath(images_csv)
 	time_now = datetime.datetime.now()
 	new_dir_name = time_now.strftime("%Y-%m-%d_%I:%M:%S")	
 	new_dir_parent = os.path.join(collection_dir,new_dir_name)

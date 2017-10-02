@@ -35,8 +35,6 @@ class PointCreator(object):
 							row['time'] = data["time"][i]
 						else:
 							#print(data[var_name][i])
-							if point["filename"] == "puntarenas":
-								print(data[var_name][i][point['lat']-5:point['lat']+5][point['lon']-5:point['lon']+5])
 							value = str(data[var_name][i][point['lat']][point['lon']])
 							if value == "--":
 								value = "0"
