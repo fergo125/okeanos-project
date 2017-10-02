@@ -126,7 +126,7 @@ class Okeanos(object):
 			self.create_images(collection_name)
 		if self.params.template.output["type"] == "csv":
 			self.create_points(collection_name)
-		
+		self.data_processor.dataset.close()
 		#Para generar una imagen cuadrada se usa una resolucion de 3.2x2.7 despues se cambia para el dpi para lo que sea necesario
 		
 	def create_images(self,collection_name):
