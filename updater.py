@@ -56,7 +56,7 @@ def delete_old_files(directory):
 def post_images(images_csv, forecast_id, region_entrypoint):
 	images_result = list()
 	#print(images_data)
-	parent_dir = os.path.normpath(images_csv)
+	parent_dir = os.path.abspath(images_csv)
 	time_now = datetime.datetime.now()
 	new_dir_name = time_now.strftime("%Y-%m-%d_%I:%M:%S")	
 	new_dir_parent = os.path.join(parent_dir,new_dir_name)
