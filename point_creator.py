@@ -34,7 +34,6 @@ class PointCreator(object):
 						if var_name == 'time':
 							row['time'] = data["time"][i]
 						else:
-							#print(data[var_name][i])
 							value = str(data[var_name][i][point['lat']][point['lon']])
 							if value == "--":
 								value = "0"
