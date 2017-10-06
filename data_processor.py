@@ -38,6 +38,9 @@ class DataProcessor(object):
 				while data_fetch:
 					var_data = self.dataset[var["entry_name"]][i][var["level"]] if process_level else self.dataset[var["entry_name"]][i]
 					data_fetch = (var_data.min() == var_data.max())
+					print("Date of the layer:",self.raw_variables['time'][i])
+					print("var data min:",var_data.min())
+					print("var data min:",var_data.max())
 				interp_data = self.interpolate_data(var_data)
 				self.raw_variables[var["output_name"]][i] =  interp_data[::-1] if reverse_data else interp_data
 
