@@ -34,7 +34,10 @@ class DataProcessor(object):
 			self.raw_variables[var["output_name"]] = np.ma.empty((data_shape[0],len(self.data_output["lat"]),len(self.data_output["lon"])))
 			#self.raw_variables[var["output_name"]] = np.empty((len(self.data_output["lat"]),len(self.data_output["lon"])))
 			for i in range(0,len(self.dataset[var["entry_name"]])):
-				var_data = self.dataset[var["entry_name"]][i][var["level"]] if process_level else self.dataset[var["entry_name"]][i]
+				data_fetch = True
+				while data_fetch:
+					var_data = self.dataset[var["entry_name"]][i][var["level"]] if process_level else self.dataset[var["entry_name"]][i]
+					data_fetch = (var_data.min() == var_data.max())
 				interp_data = self.interpolate_data(var_data)
 				self.raw_variables[var["output_name"]][i] =  interp_data[::-1] if reverse_data else interp_data
 
