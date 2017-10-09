@@ -14,6 +14,7 @@ class DataProcessor(object):
 			glob_file_path = glob.glob(file_path)
 			#print(glob_file_path)
 			self.dataset = nc.MFDataset(glob_file_path, aggdim=aggregation)
+		print("Dataset data:", self.dataset)
 		self.raw_variables = dict()
 		self.data_output = dict()
 		self.template_dimensions = list()
