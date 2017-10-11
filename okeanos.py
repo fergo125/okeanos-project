@@ -168,9 +168,9 @@ def okeanos_invoker(xmlfilename):
 	print("dataset read")
 	try:
 		okeanos = Okeanos(params,params.template.variables_dataset["datasource"])
-		okeanos.launch()
 	except IndexError as e:
 		sys.exit(1)
+	okeanos.launch()
 
 def main():
 	okeanos_invoker(sys.argv[1])
