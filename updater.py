@@ -20,7 +20,6 @@ def main():
 # 	global REGIONS_FILE
 # 	global HOSTNAME
 	parser = argparse.ArgumentParser(description='Update process for images')
-	parser.add_argument('-r','--region',  type=str)
 	parser.add_argument('-l','--local',  type=str)
 	parser.add_argument('-e','--endpoint',  type=str)
 	parser.add_argument('-pf','--parameters_file',  type=str)
