@@ -24,7 +24,7 @@ def main():
 	parser.add_argument('-l','--local',  type=str)
 	parser.add_argument('-e','--endpoint',  type=str)
 	parser.add_argument('-pf','--parameters_file',  type=str)
-	parser.add_argument('-fid','--forecat_id',  type=str)
+	parser.add_argument('-fid','--forecast_id',  type=str)
 	parser.add_argument('-ims','--images_source',  type=str)
 	parser.add_argument('-ld','--local_direction',  type=str)
 	parser.add_argument('-c','--csv_images',  type=str)
