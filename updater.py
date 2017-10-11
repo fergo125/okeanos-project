@@ -6,6 +6,7 @@ import okeanos
 import csv
 import argparse
 import datetime
+import sys
 
 #IMAGES_SOURCE_DIRECTORY = 'example'
 API_HOST_ENPOINT_DIR= ""
@@ -14,35 +15,27 @@ HOSTNAME= ""
 #format var_names = {'folder_name':'area_id'}
 
 ''''sdfsdf'''
-def main():
-	global API_HOST_ENPOINT_DIR
-	global REGIONS_FILE
-	global HOSTNAME
+# def main():
+# 	global API_HOST_ENPOINT_DIR
+# 	global REGIONS_FILE
+# 	global HOSTNAME
 	parser = argparse.ArgumentParser(description='Update process for images')
 	parser.add_argument('-r','--region',  type=str)
 	parser.add_argument('-l','--local',  type=str)
 	parser.add_argument('-e','--endpoint',  type=str)
+	parser.add_argument('-pf','--parameters_file',  type=str)
+	parser.add_argument('-fid','--forecat_id',  type=str)
+	parser.add_argument('-ims','--images_source',  type=str)
+	parser.add_argument('-ld','--local_direction',  type=str)
+	parser.add_argument('-c','--csv_images',  type=str)
 	args = parser.parse_args()
-	API_HOST_ENPOINT_DIR = args.endpoint
-	REGIONS_FILE = args.region
-	HOSTNAME = args.local
-	print(API_HOST_ENPOINT_DIR, REGIONS_FILE,HOSTNAME)
-	slides_updater()
+	try:
+		okeanos.okeanos_invoker(args.parameter_file)
+	except IndexError as e:
+		sys.exit(status=1)
+	post_images(args.images_source, args.forecast_id ,args.local_direction,args.csv_images, args.endpoint,args.local_direction)
+	sys.exit(status=0)
 
-def slides_updater():
-	print("Region's file name:", REGIONS_FILE)
-	with open(REGIONS_FILE,'r') as regions_file:
-		regions_data = csv.DictReader(regions_file)
-		print(regions_data)
-		for region in regions_data:
-			print(region)
-			#if os.path.exists(os.path.normpath(region['images_source_directory'])):
-				#delete_old_files(region['images_source_directory'])
-			print(region['parameters_file'])	
-			okeanos.okeanos_invoker(region['parameters_file'])
-			for f in os.listdir(region["images_source_directory"]):
-				if f.endswith(".csv"):
-					post_images(region["images_source_directory"], region["forecast_id"],region["local_direction"],f)
 def delete_old_files(directory):
 	print(os.path.abspath(directory))
 	walker = os.walk(os.path.abspath(directory))
@@ -54,7 +47,7 @@ def delete_old_files(directory):
 	# if len(filenames) > 0:
 	#          os.remove(os.path.join(dirpath, filename))
 	#      for filename in filenames:
-def post_images(collection_dir, forecast_id, region_entrypoint,csv_filename):
+def post_images(collection_dir, forecast_id, region_entrypoint,csv_filename,hostname,api_endpoint_dir):
 	images_result = list()
 	#print(images_data)
 	images_csv = os.path.join(collection_dir,csv_filename)
@@ -74,10 +67,10 @@ def post_images(collection_dir, forecast_id, region_entrypoint,csv_filename):
 			images_result.append({\
 			"forecast_id":forecast_id,\
 			"date":image_data['date'],\
-			"url":HOSTNAME+ '/' +region_entrypoint+new_dir_name +"/" + image_data["name"]\
+			"url":hostname+ '/' +region_entrypoint+new_dir_name +"/" + image_data["name"]\
 			})
 	print(images_result)
-	request_response = r.post(API_HOST_ENPOINT_DIR, json=images_result,headers={"Content-Type":"application/json"})
+	request_response = r.post(api_endpoint_dir, json=images_result,headers={"Content-Type":"application/json"})
 	#print("Server response: ", request_response.text)
 
 if __name__ == "__main__":
