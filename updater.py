@@ -32,9 +32,9 @@ def main():
 	try:
 		okeanos.okeanos_invoker(os.path.abspath(args.parameters_file))
 	except IndexError as e:
-		sys.exit(status=1)
+		sys.exit(1)
 	post_images(args.images_source, args.forecast_id ,args.local_direction,args.csv_images, args.local,args.endpoint)
-	sys.exit(status=0)
+	sys.exit(0)
 
 def delete_old_files(directory):
 	print(os.path.abspath(directory))
