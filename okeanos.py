@@ -167,11 +167,11 @@ def okeanos_invoker(xmlfilename):
 	#dataset = netCDF4.Dataset(params.template.datasource.cdata,"r")
 	print("dataset read")
 	try:
-		okeanos.process_vars()
 		okeanos = Okeanos(params,params.template.variables_dataset["datasource"])
+		if okeanos.process_vars():
+			okeanos.launch()
 	except IndexError as e:
 		sys.exit(1)
-	okeanos.launch()
 
 def main():
 	okeanos_invoker(sys.argv[1])
