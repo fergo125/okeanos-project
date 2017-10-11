@@ -15,7 +15,7 @@ HOSTNAME= ""
 #format var_names = {'folder_name':'area_id'}
 
 ''''sdfsdf'''
-# def main():
+def main():
 # 	global API_HOST_ENPOINT_DIR
 # 	global REGIONS_FILE
 # 	global HOSTNAME
