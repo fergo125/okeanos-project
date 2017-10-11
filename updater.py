@@ -28,10 +28,7 @@ def main():
 	parser.add_argument('-ld','--local_direction',  type=str)
 	parser.add_argument('-c','--csv_images',  type=str)
 	args = parser.parse_args()
-	try:
-		okeanos.okeanos_invoker(os.path.abspath(args.parameters_file))
-	except IndexError as e:
-		sys.exit(1)
+	okeanos.okeanos_invoker(os.path.abspath(args.parameters_file))
 	post_images(args.images_source, args.forecast_id ,args.local_direction,args.csv_images, args.local,args.endpoint)
 	sys.exit(0)
 
