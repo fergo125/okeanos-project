@@ -1,2 +1,0 @@
-forecast_id,parameters_file,images_source_directory,local_direction
-13,parameters/parameters_ocean.xml,test_ocean_collection,test_ocean_collection

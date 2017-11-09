@@ -1,0 +1,26 @@
+<template>
+  <title fontsize="9.5"></title>
+  <variables_dataset datasource="Data/wind.nc" type="single" >
+    <var output_name="u-component_of_wind_height_above_ground" level="0">u-component_of_wind_height_above_ground</var>
+    <var output_name="v-component_of_wind_height_above_ground" level="0">v-component_of_wind_height_above_ground</var>
+    <time>time1</time>
+    <lat>lat</lat>
+    <lon>lon</lon>
+  </variables_dataset>
+  <variables_template>
+    <var type="normal">u-component_of_wind_height_above_ground</var>
+    <var type="normal">v-component_of_wind_height_above_ground</var>
+  </variables_template>
+  <points interpolation_factor="2">
+	<point lat="11" lon="273.75" >npn</point>
+	<point lat="10.25" lon="273.75" >cpn</point>
+	<point lat="9.5" lon="274.75" >spn</point>
+  	<point lat="10" lon="275.25" >puntarenas</point>
+  	<point lat="9" lon="275.5" >pc</point>
+  	<point lat="8" lon="276.25" >ps</point>
+  	<point lat="5.5" lon="272.75" >ic</point>
+  	<point lat="10.25" lon="277" >caribe</point>
+  </points>
+  <output type='csv'>test_csv_wind/</output>
+</template>
+
